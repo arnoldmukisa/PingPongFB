@@ -15,6 +15,7 @@ var myApp = new Framework7({
 		};
 
 		firebase.initializeApp(config);
+		var database = firebase.database();
 
 
 // Export selectors engine
@@ -25,58 +26,104 @@ var mainView = myApp.addView('.view-main', {
 	domCache:true //enable inline pages
 });
 
-/* ===== Login screen page events ===== */
-// myApp.onPageInit('login-screen-embedded', function (page) {
-//     $$(page.container).find('.button').on('click', function () {
-//         var username = $$(page.container).find('input[name="username"]').val();
-//         var password = $$(page.container).find('input[name="password"]').val();
-//         myApp.alert('Username: ' + username + ', password: ' + password, function () {
-//             mainView.router.back();
-//         });
-//     });
-// });
+// =============Auth UI============================
+
+myApp.onPageInit('login-screen', function (page) {
+
+// FirebaseUI config.
+			var uiConfig = {
+				credentialHelper:firebaseui.auth.CredentialHelper.NONE,
+				signInSuccessUrl: 'index.html',
+				signInOptions: [
+					// Leave the lines as is for the providers you want to offer your users.
+					firebase.auth.EmailAuthProvider.PROVIDER_ID,
+					firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+					firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+					firebase.auth.TwitterAuthProvider.PROVIDER_ID
+					//firebase.auth.GithubAuthProvider.PROVIDER_ID
+
+				],
+				// Terms of service url.
+				tosUrl: 'services.html'
+			};
+
+			// Initialize the FirebaseUI Widget using Firebase.
+			var ui = new firebaseui.auth.AuthUI(firebase.auth());
+			// The start method will wait until the DOM is loaded.
+			ui.start('#firebaseui-auth-container', uiConfig);
+
+});
+
+				initApp = function() {
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {
+						// User is signed in.
+						var displayName = user.displayName;
+						var email = user.email;
+						var emailVerified = user.emailVerified;
+						var photoURL = user.photoURL;
+						var uid = user.uid;
+						var providerData = user.providerData;
+						user.getToken().then(function(accessToken) {
+							document.getElementById('sign-in-status').textContent = 'Signed in';
+							document.getElementById('log-out').textContent = 'log out';
+							document.getElementById('sign-in').textContent = 'Sign out';
+							document.getElementById('account-details').textContent = JSON.stringify({
+								displayName: displayName,
+								email: email,
+								emailVerified: emailVerified,
+								photoURL: photoURL,
+								uid: uid,
+								accessToken: accessToken,
+								providerData: providerData
+							}, null, '  ');
+						});
+						console.log(displayName);
+						// alert(displayName);
+						// $('.score').html(displayName);
 
 
+								//Creating Profile for new User
+  									var PlayerProfile = database.ref('PlayerProfile/');
+  									PlayerProfile.once('value', function(snapshot) {
+											if (snapshot.hasChild(uid))
+											{
+												alert('exists');
+											}
+											else
+											{
+												var PlayerProfile = database.ref('PlayerProfile/'+uid);
+												 PlayerProfile.set(
+													 {
+														rating:1000,
+												 		matches:'1',
+												 		displayName:displayName
+													});
+												alert("Profle Created!");
 
-// $$('.login-screen').find('.button').on('click', function () {
-//   const username = $$('.login-screen').find('input[name="username"]').val();
-//   const password = $$('.login-screen').find('input[name="password"]').val();
-//   const auth= firebase.auth();
-//
-//   const promise = auth.signInWithEmailAndPassword(username, password);
-//   promise.catch(e => console.log(e.message));
-//
-//   myApp.alert('Username: ' + username + ', password: ' + password, function () {
-//     myApp.closeModal('.login-screen');
-//   });
-// });
-//
-// $$('.login-screen').find('.signup').on('click', function () {
-//   const username = $$('.login-screen').find('input[name="username"]').val();
-//   const password = $$('.login-screen').find('input[name="password"]').val();
-//   const auth= firebase.auth();
-//
-//   const promise = auth.createUserWithEmailAndPassword(username, password);
-//   promise.catch(e => console.log(e.message));
-//
-//   myApp.alert('Username: ' + username + ', password: ' + password, function () {
-//     myApp.closeModal('.login-screen');
-//   });
-// });
-// //Add Real time listener// Handle account status
-// firebase.auth().onAuthStateChanged(firebaseUser=>{
-//     if(firebaseUser){
-//     console.log(firebaseUser);
-//     // window.location = 'index.html';
-//       $$('.score').html(firebaseUser);
-//     }
-//     else{
-//     console.log("not logged in");
-//     }
-// })
-// ============End of login screen=============
+									  }
+
+									});
+								}
+					else {
+						// User is signed out.
+						document.getElementById('sign-in-status').textContent = 'Signed out';
+						document.getElementById('sign-in').textContent = 'Sign in';
+						//$$('sign-in').removeAttr(href);
+						//$$('sign-in').addClass('log-out');
+						document.getElementById('account-details').textContent = 'null';
+					}
+				}, function(error) {
+					console.log(error);
+				});
+			};
 
 
+				window.addEventListener('load', function() {
+				initApp()
+			});
+
+// ================End of Auth UI==================
 
 // Callbacks to run specific code for specific pages, for example for About page:
 myApp.onPageInit('about', function (page) {
@@ -110,15 +157,58 @@ myApp.onPageInit('AddGame', function (page) {
 	//Getting data from Form
 	$$('.form-to-data').on('click', function(){
 
+		var user = firebase.auth().currentUser;
+		// var name, email, photoUrl, uid, emailVerified;
+
+			// if(user !=null){
+
+			var uid=user.uid;
+			var username= user.username;
+
+			//$$('#welcomeName').html('Hi'+' '+name);
+		// }else{
+		// 	$$('#welcomeName').html('No account');
+		// 	myApp.alert(' Sign In ');
+		//
+		// }
+		var database = firebase.database();
+
 		var UserformData = myApp.formToData('#UserScoreForm');// formData is an Object
 		var OpponentformData = myApp.formToData('#OpponentScoreForm');
 
-		var UserScore= UserformData["UserScore"];
-		var OpponentName= OpponentformData["OpponentName"];
-		var OpponentScore= OpponentformData["OpponentScore"];
-		var date= OpponentformData["date"];
-		var pointsAwarded="8";
-		var pointsDeducted="8";
+		var user_score= UserformData["UserScore"];
+		var opponent_name= OpponentformData["OpponentName"];
+		var opponent_score= OpponentformData["OpponentScore"];
+
+		//var pointsAwarded="8";
+		//var pointsDeducted="8";
+
+		var date = new Date();
+
+			var Games = database.ref('Games/');
+			var Game= Games.child('Game')
+			Game.push({
+									date:date,
+									loser:{
+										new_rating:1000,
+										score:opponent_score,
+										uid:"Opponrts Uid",
+										username:opponent_name
+									},
+									winner:{
+										new_rating:1000,
+										score:opponent_score,
+										uid:"opponent_uid",
+										username:opponent_name
+									}
+								})
+							alert("Game Added!!");
+							mainView.router.load(index)
+
+
+
+		// ==========Add Scores============
+
 
 
 		// ==========Add Scores============
@@ -187,82 +277,7 @@ myApp.onPageInit('AddGame', function (page) {
 });
 // ==========End of Add Page Init==================
 
-// =============Auth UI============================
 
-myApp.onPageInit('login-screen', function (page) {
-    
-// FirebaseUI config.
-			var uiConfig = {
-				credentialHelper:firebaseui.auth.CredentialHelper.NONE,
-				signInSuccessUrl: 'index.html',
-				signInOptions: [
-					// Leave the lines as is for the providers you want to offer your users.
-					firebase.auth.EmailAuthProvider.PROVIDER_ID,
-					firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-					firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-					firebase.auth.TwitterAuthProvider.PROVIDER_ID
-					//firebase.auth.GithubAuthProvider.PROVIDER_ID
-					
-				],
-				// Terms of service url.
-				tosUrl: 'services.html'
-			};
-
-			// Initialize the FirebaseUI Widget using Firebase.
-			var ui = new firebaseui.auth.AuthUI(firebase.auth());
-			// The start method will wait until the DOM is loaded.
-			ui.start('#firebaseui-auth-container', uiConfig);
-
-});
-
-				initApp = function() {
-				firebase.auth().onAuthStateChanged(function(user) {
-					if (user) {
-						// User is signed in.
-						var displayName = user.displayName;
-						var email = user.email;
-						var emailVerified = user.emailVerified;
-						var photoURL = user.photoURL;
-						var uid = user.uid;
-						var providerData = user.providerData;
-						user.getToken().then(function(accessToken) {
-							document.getElementById('sign-in-status').textContent = 'Signed in';
-							document.getElementById('log-out').textContent = 'log out';
-							document.getElementById('sign-in').textContent = 'Sign out';
-							document.getElementById('account-details').textContent = JSON.stringify({
-								displayName: displayName,
-								email: email,
-								emailVerified: emailVerified,
-								photoURL: photoURL,
-								uid: uid,
-								accessToken: accessToken,
-								providerData: providerData
-							}, null, '  ');
-						});
-						console.log(displayName);
-						// alert(displayName);
-						// $('.score').html(displayName);
-					} 
-
-					else {
-						// User is signed out.
-						document.getElementById('sign-in-status').textContent = 'Signed out';
-						document.getElementById('sign-in').textContent = 'Sign in';
-						//$$('sign-in').removeAttr(href);
-						//$$('sign-in').addClass('log-out');
-						document.getElementById('account-details').textContent = 'null';
-					}
-				}, function(error) {
-					console.log(error);
-				});
-			};
-
-
-				window.addEventListener('load', function() {
-				initApp()
-			});
-
-// ================End of Auth UI==================
 
 // ===============Log Out======================
 //var signOut = firebase.auth().signOut();
@@ -272,7 +287,7 @@ $$('#log-out').on('click', function() {
 	firebase.auth().signOut();
   // Sign-out successful.
   alert('sign out successful');
-  mainView.router.loadPage('index.php');
+  mainView.router.loadPage('index.html');
 
 });
 
