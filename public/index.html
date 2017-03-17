@@ -65,7 +65,12 @@
 					</a>
 					<!-- EOf Floating Action Button -->
 					<!-- Scrollable page content-->
-					<div class="page-content">
+					<div class="page-content pull-to-refresh-content" data-ptr-distance="55">
+						<!-- Default pull to refresh layer-->
+						    <div class="pull-to-refresh-layer">
+						      <div class="preloader"></div>
+						      <div class="pull-to-refresh-arrow"></div>
+						    </div>
 
 						<!-- Leader Board -->
 						<div class="content-block-title">Ping Pong Ratings</div>
@@ -134,18 +139,20 @@
 											<div class="item-title">Add Game</div>
 										</div>
 									</div></a></li>
-									<li><a href="auth.html" class="item-link sign-in">
-										<div class="item-content">
-											<div class="item-inner">
-												<div class="item-title" id="sign-in"></div>
-											</div>
-										</div></a></li>
-										<li><a href="form.html" class="item-link">
+										<li><a href="Players.html" class="item-link">
 											<div class="item-content">
 												<div class="item-inner">
-													<div class="item-title">Form</div>
+													<div class="item-title">Players</div>
 												</div>
-											</div></a></li>
+											</div></a>
+										</li>
+										<li><a href="auth.html" class="item-link sign-in auth">
+											<div class="item-content">
+												<div class="item-inner">
+													<div class="item-title" id="auth"></div>
+												</div>
+											</div></a>
+										</li>
 										</ul>
 									</div>
 
@@ -165,8 +172,8 @@
 				<!-- Path to your app js-->
 				<script type="text/javascript" src="js/my-app.js"></script>
 
-				<script type='text/javascript' id="__bs_script__">//<![CDATA[
-				    document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.2.11.1.js'><\/script>".replace("HOST", location.hostname));
-				//]]></script>
+				<script id="__bs_script__">//<![CDATA[
+    document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.8'><\/script>".replace("HOST", location.hostname));
+//]]></script>
 			</body>
 			</html>

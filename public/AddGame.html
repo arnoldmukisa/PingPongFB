@@ -18,12 +18,17 @@
   <!-- EOf AddGame Navbar -->
   <!-- AddGame Toolbar-->
   <div class="toolbar toolbar-bottom">
-    <div class="toolbar-inner"><a href="#index" class="back link">index</a><a href="#" class="link">Link 2</a></div>
+    <div class="toolbar-inner"><a href="#index" class="back link">Home</a><a href="players.html" class="link">Players</a></div>
   </div>
   <!-- EOf AddGame toolbar -->
 
   <!-- Scrollable page content-->
-  <div class="page-content">
+  <div class="page-content pull-to-refresh-content" data-ptr-distance="55">
+    <!-- Default pull to refresh layer-->
+        <div class="pull-to-refresh-layer">
+          <div class="preloader"></div>
+          <div class="pull-to-refresh-arrow"></div>
+        </div>
     <div class="content-block-title">GAME INFO</div>
 
     <div class="card">
@@ -73,16 +78,6 @@
             </div>
           </div>
         </li>
-        <li>
-          <div class="item-content">
-            <div class="item-inner">
-              <div class="item-input">
-                <input type="date" name="date" placeholder="Date" value="2014-04-30">
-              </div>
-            </div>
-          </div>
-        </li>
-
       </ul>
     </form>
 
