@@ -20,7 +20,6 @@ var $$ = Dom7;
 var mainView = myApp.addView('.view-main', {
 	domCache:true //enable inline pages
 });
-
 // ============================================Auth UI====================================================
 
 myApp.onPageInit('login-screen', function (page) {
@@ -45,68 +44,13 @@ myApp.onPageInit('login-screen', function (page) {
 
 });
 
-initApp = function() {
-	firebase.auth().onAuthStateChanged(function(user) {
-		if (user) {
-			// User is signed in.
-			var displayName = user.displayName;
-			var email = user.email;
-			var emailVerified = user.emailVerified;
-			var photoURL = user.photoURL;
-			var uid = user.uid;
-			var providerData = user.providerData;
-			user.getToken().then(function(accessToken) {
-				document.getElementById('sign-in-status').textContent = 'Signed in';
-				document.getElementById('log-out').textContent = 'log out';
-				document.getElementById('sign-in').textContent = 'Sign out';
-				document.getElementById('account-details').textContent = JSON.stringify({
-					displayName: displayName,
-					email: email,
-					emailVerified: emailVerified,
-					photoURL: photoURL,
-					uid: uid,
-					accessToken: accessToken,
-					providerData: providerData
-				}, null, '  ');
-			});
-			console.log(displayName); // for dev purposes
+myApp.onPageInit('players', function (page) {
+	// run createContentPage func after link was clicked
+	playerContent();
+});
 
-
-			//Creating Profile for new User
-			var PlayerProfile = database.ref('PlayerProfile/');
-			PlayerProfile.once('value', function(snapshot) {
-				if (snapshot.hasChild(uid))
-				{
-					// alert('exists');
-				}
-				else
-				{
-					var PlayerProfile = database.ref('PlayerProfile/'+uid);
-					PlayerProfile.set(
-						{
-							rating:1000,
-							matches:'1',
-							displayName:displayName
-						});
-						alert("Profle Created!");
-
-					}
-				});
-			}
-			else {
-				// User is signed out.
-				document.getElementById('sign-in-status').textContent = 'Signed out';
-				document.getElementById('sign-in').textContent = 'Sign in';
-				//$$('sign-in').removeAttr(href);
-				//$$('sign-in').addClass('log-out');
-				document.getElementById('account-details').textContent = 'null';
-			}
-		}, function(error) {
-			console.log(error);
-		});
-	};
-	window.addEventListener('load', function() {
-		initApp()
+window.addEventListener('load', function() {
+		authState()
 	});
 
 	// ===============================================End of Auth UI=====================================================
@@ -291,14 +235,6 @@ initApp = function() {
 	// ===============Log Out======================
 	//var signOut = firebase.auth().signOut();
 
-	$$('#log-out').on('click', function() {
-
-		firebase.auth().signOut();
-		// Sign-out successful.
-		alert('sign out successful');
-		mainView.router.loadPage('index.html');
-
-	});
 
 	// Generate dynamic page
 	var dynamicPageIndex = 0;
@@ -328,3 +264,107 @@ initApp = function() {
 		);
 		return;
 	}
+// ===============================FUNCTIONS================================================//
+authState = function() {
+	firebase.auth().onAuthStateChanged(function(user) {
+		if (user)
+		{
+			// User is signed in.
+			var displayName = user.displayName;
+			var email = user.email;
+			var emailVerified = user.emailVerified;
+			var photoURL = user.photoURL;
+			var uid = user.uid;
+			var providerData = user.providerData;
+			user.getToken().then(function(accessToken) {
+				document.getElementById('sign-in-status').textContent = 'Signed in';
+				document.getElementById('log-out').textContent = 'log out';
+				document.getElementById('auth').textContent = 'Sign out';
+				var authLink = $$('a').filter(function(index, el) {
+							    return $$(this).hasClass('auth');
+							})
+				authLink.toggleClass('sign-in')
+				authLink.removeAttr('href')
+				
+				document.getElementById('account-details').textContent = JSON.stringify({
+					displayName: displayName,
+					email: email,
+					emailVerified: emailVerified,
+					photoURL: photoURL,
+					uid: uid,
+					accessToken: accessToken,
+					providerData: providerData
+				}, null, '  ');
+			});
+			console.log(displayName); // for dev purposes
+			//Create Profile Table if does not exists
+			var PlayerProfile = database.ref('PlayerProfile/');
+			PlayerProfile.once('value', function (snapshot)
+			{
+					if (snapshot.hasChild(uid))
+					{}// log.console('exists')
+					else
+					{
+					var PlayerProfile = database.ref('PlayerProfile/'+uid);
+					PlayerProfile.set(
+					{
+						rating:1000,
+						matches:'1',
+						displayName:displayName
+					});
+					alert("Profle Created!");
+					}
+				});
+			}
+
+			else {
+				// User is signed out.
+				document.getElementById('sign-in-status').textContent = 'Signed out';
+				document.getElementById('auth').textContent = 'Sign in';
+				//$$('sign-in').removeAttr(href);
+				//$$('sign-in').addClass('log-out');
+				document.getElementById('account-details').textContent = 'null';
+			}
+		}, function(error) {
+			console.log(error);
+		});
+	};
+//==============================End of authState Function=================================
+$$('#log-out').on('click', function() {
+	firebase.auth().signOut();
+	// Sign-out successful.
+	alert('sign out successful');
+	mainView.router.loadPage('index.html');
+
+});
+
+// ============================================Generate Player List=============================
+
+
+var players = ['Player One', 'Player Two', 'Player Three', 'Player Four'];
+var ratings = ['1000', '1000', '1000', '1000'];
+
+playerContent = function (e) {
+
+			for(i=0; i<players.length; i++){
+				 // Random image
+				 var picURL = './img/account_circle.svg';
+				 // Random song
+				 var player = players[i];
+				 // Random author
+				 var rating = ratings[i];
+				 // List item html
+				 var itemHTML = '<li class="item-content">' +
+													 '<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
+													 '<div class="item-inner">' +
+														 '<div class="item-title-row">' +
+															 '<div class="item-title">' + player + '</div>' +
+														 '</div>' +
+														 '<div class="item-subtitle">' + rating + '</div>' +
+													 '</div>' +
+												 '</li>';
+				 // Prepend new list element
+				  $$('.player-list').find('ul').prepend(itemHTML);
+			 // When loading done, we need to reset it
+			 }
+};
