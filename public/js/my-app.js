@@ -3,8 +3,6 @@ var myApp = new Framework7({
 	material: true
 	// pushState:true
 });
-
-
 // Initialize Firebase
 var config = {
 	apiKey: "AIzaSyB5LRHsMRabuBJIuu2lZ78rLm90oMVQ_3E",
@@ -13,14 +11,11 @@ var config = {
 	storageBucket: "cmupingpong.appspot.com",
 	messagingSenderId: "351881220973"
 };
-
 firebase.initializeApp(config);
 var database = firebase.database();
 
-
 // Export selectors engine
 var $$ = Dom7;
-
 // Add view
 var mainView = myApp.addView('.view-main', {
 	domCache:true //enable inline pages
