@@ -82,7 +82,7 @@ initApp = function() {
 			PlayerProfile.once('value', function(snapshot) {
 				if (snapshot.hasChild(uid))
 				{
-					alert('exists');
+					// alert('exists');
 				}
 				else
 				{
@@ -128,22 +128,53 @@ initApp = function() {
 	myApp.onPageInit('AddGame', function (page) {
 
 		// Opponet data array
-		var SecondPlayer = ('PlayerOne PlayerTwo PlayerThree PlayerFour PlayerFive').split(' ');
+		// var SecondPlayer = ('PlayerOne PlayerTwo PlayerThree PlayerFour PlayerFive').split(' ');
+		// for(var displayName in SecondPlayer){
+	  //   alert(displayName + ': ' + SecondPlayer[displayName]);
+		// 	}
 
-		var autocompleteDropdownAll = myApp.autocomplete({
-			input: '#autocomplete-dropdown-all',
-			openIn: 'dropdown',
-			source: function (autocomplete, query, render) {
-				var results = [];
-				// Find matched items
-				for (var i = 0; i < SecondPlayer.length; i++) {
-					if (SecondPlayer[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(SecondPlayer[i]);
-				}
-				// Render items by passing array with result items
-				render(results);
-			}
-		});
 
+
+		var player_ref = firebase.database().ref('PlayerProfile/');
+
+		player_ref.once("value", function(snapshot) {
+		var data = snapshot.forEach(function(player_snap) {
+
+			// var key = player_snap.key();
+			var uid = player_snap.child("uid").val();
+			var displayName = player_snap.child("displayName").val();
+
+				console.log(displayName);
+				// results=[displayName];
+
+						var autocompleteDropdownAll = myApp.autocomplete({
+							input: '#autocomplete-dropdown-all',
+							openIn: 'dropdown',
+							source: function (autocomplete, query, render) {
+
+								// Find matched items
+
+
+
+								// results = [displayName];
+								// for (var i = 0; i < SecondPlayer.length; i++)
+								// {
+								// 	if (SecondPlayer[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(SecondPlayer[i]);
+								// }
+								// Render items by passing array with result items
+
+
+								for (var i = 0; i < displayName.length; i++)
+								{
+									// if (displayName[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) displayName.push(displayName[i]);
+								}
+								// Render items by passing array with result items
+								render(displayName);
+							}
+						});
+
+});
+});
 
 		//Getting data from Form
 		$$('.form-to-data').on('click', function(){
@@ -201,14 +232,21 @@ initApp = function() {
 
 		// ============Auth Status===============
 		// =======================================Get Profiles========================================
-		var ref = firebase.database().ref();
 
-			ref.on("value", function(snapshot) {
-			   console.log(snapshot.val());
+		var ref = firebase.database().ref('PlayerProfile/');
+
+			ref.on("value", function(snapshot)
+			{
+				var profile = snapshot.val();
+
+				// console.log(profile);
+
 			}, function (error) {
 			   console.log("Error: " + error.code);
 			});
-
+			ref.orderByChild("displayName").on("child_added", function(data) {
+   	// 	console.log(data.val().displayName);
+});
 
 		// ===========Get Rating============
 		// var PlayerProfile = database.ref('PlayerProfile/');
