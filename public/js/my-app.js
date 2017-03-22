@@ -1,6 +1,7 @@
 // Initialize your app
 var myApp = new Framework7({
-	material: true
+	material: true,
+	modalCloseByOutside:true,
 	// pushState:true
 });
 // Initialize Firebase
@@ -44,10 +45,26 @@ myApp.onPageInit('login-screen', function (page) {
 
 });
 
-myApp.onPageInit('players', function (page) {
-	// run createContentPage func after link was clicked
-	playerContent();
-});
+$$(document).on('page:init', function (e) {
+
+	var page = e.detail.page;
+	playerContent(3);
+
+	if (page.name === '') {
+
+		playerContent(3);
+
+	}
+	// Player Page
+	if (page.name === 'players') {
+
+		playerContent(1000);
+
+	}
+
+
+})
+
 
 window.addEventListener('load', function() {
 		authState()
@@ -66,79 +83,49 @@ window.addEventListener('load', function() {
 	// =================Add Game Page=====================
 	myApp.onPageInit('AddGame', function (page) {
 
-		// Opponet data array
-		// var SecondPlayer = ('PlayerOne PlayerTwo PlayerThree PlayerFour PlayerFive').split(' ');
-		// for(var displayName in SecondPlayer){
-	  //   alert(displayName + ': ' + SecondPlayer[displayName]);
-		// 	}
 
+// Populating Opponents Name Field
+	var autocompleteDropdownAll = myApp.autocomplete({
+		input: '#autocomplete-dropdown-all',
+		openIn: 'dropdown',
+		source: function (autocomplete, query, render) {
 
-
-		var player_ref = firebase.database().ref('PlayerProfile/');
+	var results=[];
+	var player_ref = firebase.database().ref('PlayerProfile/');
 
 		player_ref.once("value", function(snapshot) {
-		var data = snapshot.forEach(function(player_snap) {
-
-			// var key = player_snap.key();
+		snapshot.forEach(function(player_snap) {
 			var uid = player_snap.child("uid").val();
 			var displayName = player_snap.child("displayName").val();
 
-				console.log(displayName);
-				// results=[displayName];
+        if (displayName.toLowerCase().indexOf(query.toLowerCase()) >= 0)
+			results.push(displayName);
+		});
+		});
+		render(results)
 
-						var autocompleteDropdownAll = myApp.autocomplete({
-							input: '#autocomplete-dropdown-all',
-							openIn: 'dropdown',
-							source: function (autocomplete, query, render) {
-
-								// Find matched items
-
-
-
-								// results = [displayName];
-								// for (var i = 0; i < SecondPlayer.length; i++)
-								// {
-								// 	if (SecondPlayer[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(SecondPlayer[i]);
-								// }
-								// Render items by passing array with result items
-
-
-								for (var i = 0; i < displayName.length; i++)
-								{
-									// if (displayName[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) displayName.push(displayName[i]);
-								}
-								// Render items by passing array with result items
-								render(displayName);
-							}
-						});
-
-});
-});
+		}
+	});
+// End of Opponents Name field
 
 		//Getting data from Form
 		$$('.form-to-data').on('click', function(){
 
 			var user = firebase.auth().currentUser;
-			// var name, email, photoUrl, uid, emailVerified;
-
-			// if(user !=null){
-
-			var uid=user.uid;
-			var username= user.username;
-
-			//$$('#welcomeName').html('Hi'+' '+name);
-			// }else{
-			// 	$$('#welcomeName').html('No account');
-			// 	myApp.alert(' Sign In ');
-			//
-			// }
 			var database = firebase.database();
 
-			var UserformData = myApp.formToData('#UserScoreForm');// formData is an Object
-			var OpponentformData = myApp.formToData('#OpponentScoreForm');
 
+
+			//Current User Data
+			var UserformData = myApp.formToData('#UserScoreForm');// formData is an Object
+			var user_uid=user.uid;
+			var displayName= user.displayName;
 			var user_score= UserformData["UserScore"];
+
+			//Opponent Data
+			var OpponentformData = myApp.formToData('#OpponentScoreForm');
 			var opponent_name= OpponentformData["OpponentName"];
+			var opponent_uid= "uid";
 			var opponent_score= OpponentformData["OpponentScore"];
 
 			//var pointsAwarded="8";
@@ -153,21 +140,22 @@ window.addEventListener('load', function() {
 				loser:{
 					new_rating:1000,
 					score:opponent_score,
-					uid:"Opponrts Uid",
+					uid:opponent_uid,
 					username:opponent_name
 				},
 				winner:{
 					new_rating:1000,
-					score:opponent_score,
-					uid:"opponent_uid",
-					username:opponent_name
+					score:user_score,
+					uid:user_uid,
+					username:displayName
 				}
 			})
 			alert("Game Added!!");
-			mainView.router.load(index)
+
+			mainView.router.loadPage('index.html');
 
 		});
-		// ==========End of Add Score============
+// ==========End of Add Score============
 
 		// ============Auth Status===============
 		// =======================================Get Profiles========================================
@@ -181,10 +169,10 @@ window.addEventListener('load', function() {
 				// console.log(profile);
 
 			}, function (error) {
-			   console.log("Error: " + error.code);
+				 console.log("Error: " + error.code);
 			});
 			ref.orderByChild("displayName").on("child_added", function(data) {
-   	// 	console.log(data.val().displayName);
+		// 	console.log(data.val().displayName);
 });
 
 		// ===========Get Rating============
@@ -192,26 +180,6 @@ window.addEventListener('load', function() {
 		// var rating= PlayerProfile.child('rating')
 		// PlayerProfile.once('value', function(snapshot) {
 		// 	if (snapshot.hasChild(uid))
-
-
-
-		//     $$.ajax({
-		//       type: "POST",
-		//       url: 'Read_controller/read_rating',
-		//       data: {username:'amukisa'},
-		//       //async: false,
-		//       dataType: JSON,
-		//       success: function (data) {
-		//
-		//         //JSON.stringify(data);
-		//
-		//         var rate =  data;
-		//
-		//         $$('.score').html(rate);
-		//         console.log(data[0][0].rating);
-		//       }
-		//
-		// });
 		//End of Get Rating php
 		var user = firebase.auth().currentUser;
 		var name, email, photoUrl, uid, emailVerified;
@@ -281,11 +249,11 @@ authState = function() {
 				document.getElementById('log-out').textContent = 'log out';
 				document.getElementById('auth').textContent = 'Sign out';
 				var authLink = $$('a').filter(function(index, el) {
-							    return $$(this).hasClass('auth');
+									return $$(this).hasClass('auth');
 							})
 				authLink.toggleClass('sign-in')
 				authLink.removeAttr('href')
-				
+
 				document.getElementById('account-details').textContent = JSON.stringify({
 					displayName: displayName,
 					email: email,
@@ -316,8 +284,8 @@ authState = function() {
 					}
 				});
 			}
-
-			else {
+			else
+			{
 				// User is signed out.
 				document.getElementById('sign-in-status').textContent = 'Signed out';
 				document.getElementById('auth').textContent = 'Sign in';
@@ -339,20 +307,23 @@ $$('#log-out').on('click', function() {
 });
 
 // ============================================Generate Player List=============================
+playerContent = function (list_no) {
 
 
-var players = ['Player One', 'Player Two', 'Player Three', 'Player Four'];
-var ratings = ['1000', '1000', '1000', '1000'];
+		// list_no = 100;
+		var player_ref = firebase.database().ref('PlayerProfile/');
 
-playerContent = function (e) {
+		player_ref.orderByChild("rating").limitToFirst(list_no).once("value", function(snapshot) {
+		snapshot.forEach(function(player_snap) {
+			var ratings = player_snap.child("rating").val();
+			var players = player_snap.child("displayName").val();
 
-			for(i=0; i<players.length; i++){
 				 // Random image
 				 var picURL = './img/account_circle.svg';
 				 // Random song
-				 var player = players[i];
+				 var player = players;
 				 // Random author
-				 var rating = ratings[i];
+				 var rating = ratings;
 				 // List item html
 				 var itemHTML = '<li class="item-content">' +
 													 '<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
@@ -364,7 +335,11 @@ playerContent = function (e) {
 													 '</div>' +
 												 '</li>';
 				 // Prepend new list element
-				  $$('.player-list').find('ul').prepend(itemHTML);
+					$$('.player-list').find('ul').prepend(itemHTML);
 			 // When loading done, we need to reset it
-			 }
+
+		});
+		});
+
+
 };

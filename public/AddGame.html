@@ -1,92 +1,116 @@
 <!-- AddGame Page-->
 <div data-page="AddGame" class="page toolbar-fixed">
-  <!-- Add Game Navbar-->
-  <div class="navbar">
-    <div class="navbar-inner" data-page="AddGame">
-      <!-- We have index navbar without left link-->
-      <div class="left">
-        <a href="#index" class="link icon-only">
-          <i class="icon icon-back"></i>
-        </a>
-      </div>
-      <div class="center">CMU PINGPONG CLUB</div>
-      <div class="right">
-        <!-- Right link contains only icon - additional "icon-only" class--><a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a>
-      </div>
+    <!-- Add Game Navbar-->
+    <div class="navbar">
+        <div class="navbar-inner" data-page="AddGame">
+            <!-- We have index navbar without left link-->
+            <div class="left">
+                <a href="#index" class="link icon-only">
+                    <i class="icon icon-back"></i>
+                </a>
+            </div>
+            <div class="center">CMU PINGPONG CLUB</div>
+            <div class="right">
+                <!-- Right link contains only icon - additional "icon-only" class-->
+                <a href="#" class="link icon-only open-panel"> <i class="icon icon-bars"></i></a>
+            </div>
+        </div>
     </div>
-  </div>
-  <!-- EOf AddGame Navbar -->
-  <!-- AddGame Toolbar-->
-  <div class="toolbar toolbar-bottom">
-    <div class="toolbar-inner"><a href="#index" class="back link">Home</a><a href="players.html" class="link">Players</a></div>
-  </div>
-  <!-- EOf AddGame toolbar -->
+    <!-- EOf AddGame Navbar -->
+    <!-- AddGame Toolbar-->
+    <div class="toolbar toolbar-bottom">
+        <div class="toolbar-inner"><a href="#index" class="back link">Home</a><a href="players.html" class="link">Players</a></div>
+    </div>
+    <!-- EOf AddGame toolbar -->
 
-  <!-- Scrollable page content-->
-  <div class="page-content pull-to-refresh-content" data-ptr-distance="55">
-    <!-- Default pull to refresh layer-->
+    <!-- Scrollable page content-->
+    <div class="page-content pull-to-refresh-content" data-ptr-distance="55">
+        <!-- Default pull to refresh layer-->
         <div class="pull-to-refresh-layer">
-          <div class="preloader"></div>
-          <div class="pull-to-refresh-arrow"></div>
+            <div class="preloader"></div>
+            <div class="pull-to-refresh-arrow"></div>
         </div>
-    <div class="content-block-title">GAME INFO</div>
+        <div class="content-block-title">GAME INFO</div>
 
-    <div class="card">
-      <div class="center card-header" id="welcomeName"></div>
-      <div class="card-content">
-        <div class="card-content-inner">
+        <div class="card">
+            <div class="center card-header" id="welcomeName"></div>
+            <div class="card-content">
+                <div class="card-content-inner">
 
-          <form id="UserScoreForm" class="list-block">
-            <ul>
-              <li>
-                <div class="item-content">
-                  <div class="item-inner">
-                    <!--  -->
-                    <div class="item-input">
-                      <input type="text" name="UserScore" id="" placeholder="Enter Your Score Here">
-                    </div>
-                  </div>
+                    <form id="UserScoreForm" class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <!--  -->
+                                        <div class="item-input">
+                                            <input type="text" name="UserScore" id="" placeholder="Enter Your Score Here">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
                 </div>
-              </li>
-            </ul>
-          </form>
+            </div>
+            <div class="card-footer">Your Score is<i class="rating"> </i> <i class="material-icons">grade</i></div>
         </div>
-      </div>
-      <div class="card-footer">Your Score is<i class="rating"> </i> <i class="material-icons">grade</i></div>
+
+
+        <form id="OpponentScoreForm" class="list-block ajax-submit">
+            <ul>
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title label">Opponent</div>
+                            <div class="item-input">
+                                <input type="text" name="OpponentName" placeholder="Opponent's Name" id="autocomplete-dropdown-all">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title label">Score</div>
+                            <div class="item-input">
+                                <input type="text" name="OpponentScore" placeholder="Opponent's Score">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </form>
+
+        <div class="content-block">
+            <a href="#" class="form-to-data"><input type="submit" name="submit" class="button" value="ADD"></a>
+        </div>
+
+        <!-- <div class="content-block-title">Side panels</div> -->
+        <!-- <div class="content-block">
+    <div class="row">
+    <div class="col-50"><a href="#" data-panel="left" class="button open-panel">Left Panel</a></div>
+    <div class="col-50"><a href="#" data-panel="right" class="button open-panel">Right Panel</a></div>
+  </div>
+</div> -->
     </div>
+    <!-- EOf Page Content -->
 
 
-    <form id="OpponentScoreForm" class="list-block ajax-submit">
-      <ul>
-        <li>
-          <div class="item-content">
-            <div class="item-inner">
-              <div class="item-title label">Opponent</div>
-              <div class="item-input">
-                <input type="text" name="OpponentName" placeholder="Opponent's Name" id="autocomplete-dropdown-all">
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="item-content">
-            <div class="item-inner">
-              <div class="item-title label">Score</div>
-              <div class="item-input">
-                <input type="text" name="OpponentScore" placeholder="Opponent's Score">
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </form>
+</div>
+<!-- EOf Page-AddGame -->
+</div>
+</div>
+</li>
+</ul>
+</form>
 
-    <div class="content-block">
-      <a href="#" class="form-to-data"><input type="submit" name="submit" class="button" value="ADD"></a>
-    </div>
+<div class="content-block">
+    <a href="#" class="form-to-data"><input type="submit" name="submit" class="button" value="ADD"></a>
+</div>
 
-    <!-- <div class="content-block-title">Side panels</div> -->
-    <!-- <div class="content-block">
+<!-- <div class="content-block-title">Side panels</div> -->
+<!-- <div class="content-block">
     <div class="row">
     <div class="col-50"><a href="#" data-panel="left" class="button open-panel">Left Panel</a></div>
     <div class="col-50"><a href="#" data-panel="right" class="button open-panel">Right Panel</a></div>
@@ -96,4 +120,5 @@
 <!-- EOf Page Content -->
 
 
-</div><!-- EOf Page-AddGame -->
+</div>
+<!-- EOf Page-AddGame -->
