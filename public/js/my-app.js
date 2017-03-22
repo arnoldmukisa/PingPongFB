@@ -12,6 +12,7 @@ var config = {
 	storageBucket: "cmupingpong.appspot.com",
 	messagingSenderId: "351881220973"
 };
+
 firebase.initializeApp(config);
 var database = firebase.database();
 
@@ -20,55 +21,45 @@ var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main', {
 	domCache:true //enable inline pages
-});
-// ============================================Auth UI====================================================
-
-myApp.onPageInit('login-screen', function (page) {
-
-	// FirebaseUI config.
-	var uiConfig = {
-		credentialHelper:firebaseui.auth.CredentialHelper.NONE,
-		signInSuccessUrl: 'index.html',
-		signInOptions: [
-			firebase.auth.EmailAuthProvider.PROVIDER_ID,
-			firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-			firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-			firebase.auth.TwitterAuthProvider.PROVIDER_ID
-		],
-		// Terms of service url.
-		tosUrl: 'services.html'
-	};
-	// Initialize the FirebaseUI Widget using Firebase.
-	var ui = new firebaseui.auth.AuthUI(firebase.auth());
-	// The start method will wait until the DOM is loaded.
-	ui.start('#firebaseui-auth-container', uiConfig);
 
 });
+window.addEventListener('load', function() {
+		playerContent(3);
+		authState();
+	});
 
 $$(document).on('page:init', function (e) {
 
 	var page = e.detail.page;
-	playerContent(3);
-
-	if (page.name === '') {
-
-		playerContent(3);
-
-	}
 	// Player Page
 	if (page.name === 'players') {
 
 		playerContent(1000);
 
 	}
+	if (page.name === 'login-screen') {
 
+		var uiConfig = {
+			credentialHelper:firebaseui.auth.CredentialHelper.NONE,
+			signInSuccessUrl: 'index.html',
+			signInOptions: [
+				firebase.auth.EmailAuthProvider.PROVIDER_ID,
+				firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+				firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+				firebase.auth.TwitterAuthProvider.PROVIDER_ID
+			],
+			// Terms of service url.
+			tosUrl: 'services.html'
+		};
+		// Initialize the FirebaseUI Widget using Firebase.
+		var ui = new firebaseui.auth.AuthUI(firebase.auth());
+		// The start method will wait until the DOM is loaded.
+		ui.start('#firebaseui-auth-container', uiConfig);
+
+	}
 
 })
 
-
-window.addEventListener('load', function() {
-		authState()
-	});
 
 	// ===============================================End of Auth UI=====================================================
 
@@ -79,6 +70,8 @@ window.addEventListener('load', function() {
 			createContentPage();
 		});
 	});
+
+
 
 	// =================Add Game Page=====================
 	myApp.onPageInit('AddGame', function (page) {
@@ -91,7 +84,7 @@ window.addEventListener('load', function() {
 		source: function (autocomplete, query, render) {
 
 	var results=[];
-	var player_ref = firebase.database().ref('PlayerProfile/');
+	var player_ref = database.ref('PlayerProfile/');
 
 		player_ref.once("value", function(snapshot) {
 		snapshot.forEach(function(player_snap) {
@@ -112,7 +105,7 @@ window.addEventListener('load', function() {
 		$$('.form-to-data').on('click', function(){
 
 			var user = firebase.auth().currentUser;
-			var database = firebase.database();
+			// var database = firebase.database();
 
 
 
@@ -160,20 +153,19 @@ window.addEventListener('load', function() {
 		// ============Auth Status===============
 		// =======================================Get Profiles========================================
 
-		var ref = firebase.database().ref('PlayerProfile/');
-
-			ref.on("value", function(snapshot)
-			{
-				var profile = snapshot.val();
-
-				// console.log(profile);
-
-			}, function (error) {
-				 console.log("Error: " + error.code);
-			});
-			ref.orderByChild("displayName").on("child_added", function(data) {
-		// 	console.log(data.val().displayName);
-});
+		// var ref = database.ref('PlayerProfile/');
+		//
+		// 	ref.on("value", function(snapshot)
+		// 	{
+		// 		var profile = snapshot.val();
+		//
+		// 	}, function (error) {
+		// 		 console.log("Error: " + error.code);
+		// 	});
+		// 	ref.orderByChild("displayName").on("child_added", function(data) {
+		//
+		//
+		// });
 
 		// ===========Get Rating============
 		// var PlayerProfile = database.ref('PlayerProfile/');
@@ -181,6 +173,7 @@ window.addEventListener('load', function() {
 		// PlayerProfile.once('value', function(snapshot) {
 		// 	if (snapshot.hasChild(uid))
 		//End of Get Rating php
+
 		var user = firebase.auth().currentUser;
 		var name, email, photoUrl, uid, emailVerified;
 
@@ -309,9 +302,8 @@ $$('#log-out').on('click', function() {
 // ============================================Generate Player List=============================
 playerContent = function (list_no) {
 
-
 		// list_no = 100;
-		var player_ref = firebase.database().ref('PlayerProfile/');
+		var player_ref = database.ref('PlayerProfile/');
 
 		player_ref.orderByChild("rating").limitToFirst(list_no).once("value", function(snapshot) {
 		snapshot.forEach(function(player_snap) {
