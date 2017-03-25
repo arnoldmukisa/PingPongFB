@@ -29,9 +29,12 @@
 				<p>Account Info</p>
 				<p id="sign-in-status"></p>
 				<p id="account-details"></p>
-				<p><a href="#AddGame" class="link">Add Game</a></p>
-				<p><a href="#" class="link">Leader Board</a></p>
-				<p><a href="auth.html" class="link open-login-screen">Sign In</a></p>
+				<p><a href="add-game.html" class="link close-panel">Add Game</a></p>
+				<p><a href="players.html" class="link close-panel">Leader Board</a></p>
+				<p>
+					<a href="auth.html" class="link open-login-screen close-panel" id="auth"></a>
+				</p>
+				<span id="log-out"></span>
 			</div>
 		</div>
 		<!-- Views-->
@@ -59,7 +62,7 @@
 						<!-- End of Top Nav Bar -->
 
 						<!-- Floating Action Button -->
-						<a href="AddGame.html" data-page="index" class="floating-button color-blue">
+						<a href="add-game.html" data-page="index" class="floating-button color-blue">
 							<i class="icon icon-plus"></i>
 						</a>
 						<!-- EOf Floating Action Button -->
@@ -80,14 +83,12 @@
 
 									<div class="card-content player-list">
 										<div class="list-block media-list">
-											<ul>
-
-											</ul>
+											<ul></ul>
 										</div>
 									</div>
 									<div class="card-footer">
-										<span>Date</span>
-										<span id="log-out"></span>
+										<span class="date"></span>
+										<a href="players.html"><span>More</span></a>
 									</div>
 								</div>
 							</div>
@@ -98,7 +99,16 @@
 							<div class="list-block">
 								<ul>
 									<li>
-										<a href="#AddGame" class="item-link">
+										<a href="auth.html" class="item-link sign-in auth">
+											<div class="item-content">
+												<div class="item-inner">
+													<div class="item-title" id="login-screen"></div>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="add-game.html" class="item-link">
 											<div class="item-content">
 												<div class="item-inner">
 													<div class="item-title">Add Game</div>
@@ -107,7 +117,7 @@
 										</a>
 									</li>
 									<li>
-										<a href="Players.html" class="item-link">
+										<a href="players.html" class="item-link">
 											<div class="item-content">
 												<div class="item-inner">
 													<div class="item-title">Players</div>
@@ -116,10 +126,10 @@
 										</a>
 									</li>
 									<li>
-										<a href="auth.html" class="item-link sign-in auth">
+										<a href="timeline.html" class="item-link">
 											<div class="item-content">
 												<div class="item-inner">
-													<div class="item-title" id="auth"></div>
+													<div class="item-title">Timeline</div>
 												</div>
 											</div>
 										</a>
@@ -138,18 +148,10 @@
 			<!-- EOf view-main -->
 		</div>
 		<!-- EOf Views -->
-
 		<!-- Path to Framework7 Library JS-->
 		<script type="text/javascript" src="js/framework7.min.js"></script>
 		<!-- Path to your app js-->
 		<script type="text/javascript" src="js/my-app.js"></script>
-
-		<script id="__bs_script__">
-			//<![CDATA[
-			document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.8'><\/script>".replace("HOST", location.hostname));
-			//]]>
-
-		</script>
 	</body>
 
 </html>
