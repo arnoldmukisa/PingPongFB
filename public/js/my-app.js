@@ -27,6 +27,7 @@ var mainView = myApp.addView('.view-main', {
 window.addEventListener('load', function() {
 	playerContent(3, 'rating');
 	authState();
+
 });
 
 $$(document).on('page:init', function(e) {
@@ -115,46 +116,99 @@ myApp.onPageInit('add-game', function(page) {
 	});
 	// End of Opponents Name field
 
+
 	//Getting data from Form
 	$$('.form-to-data').on('click', function() {
 
 		//Current User Data
 		var UserformData = myApp.formToData('#UserScoreForm'); // formData is an Object
 		var user_uid = user.uid;
-		var displayName = user.displayName;
+		var user_name = user.displayName;
+		var user_rating = user.rating;
 		var user_score = UserformData["UserScore"];
 
 		//Opponent Data
 		var OpponentformData = myApp.formToData('#OpponentScoreForm');
 		var opponent_name = OpponentformData["OpponentName"];
-		var opponent_uid = "uid";
 		var opponent_score = OpponentformData["OpponentScore"];
+		var opponent_uid = 'opponentUserId';
+
+		// var player_ref = database.ref('PlayerProfile/');
+		// player_ref.orderByChild("displayName").equalTo(opponent_name).on("child_added", function(snapshot) {
+		// 	var opponent_uid = snapshot.key;
+		// 	var opponent_rating = snapshot.val().rating;
+		// }); //End of player_ref opponent_uid
+
+		// var opponentUser = {};
+
+		if (!opponent_score || !user_score) {
+			myApp.alert('field is empty...');
+			return;
+		}
+
+		var winner_score, winner_uid, winner_name;
+		var loser_score, loser_uid, loser_name;
+
+		function findWinner() {
+
+			if (user_score > opponent_score) {
+
+				winner_score = user_score;
+				winner_uid = user_uid;
+				winner_name = user_name;
+
+				loser_score = opponent_score;
+				loser_uid = opponent_uid;
+				loser_name = opponent_name;
+				var player_ref = database.ref('PlayerProfile/' + opponent_name);
+				myApp.alert('winner:' + winner_score);
+				myApp.alert('loser:' + loser_score);
+				myApp.alert('oppnent:' + player_ref);
+
+			} else {
+				winner_score = opponent_score;
+				winner_uid = opponent_uid;
+				winner_name = opponent_name;
+
+				loser_score = user_score;
+				loser_uid = user_uid;
+				loser_name = user_name;
+				myApp.alert('winner:' + winner_score);
+				myApp.alert('loser:' + loser_score);
+
+
+			}
+		}
+
+		function pushGame() {
+
+			findWinner();
+
+			var Games = database.ref('Games/');
+			var Game = Games.child('Game')
+			Game.push({
+				loser: {
+					new_rating: 1000,
+					score: loser_score,
+					uid: loser_uid,
+					username: loser_name
+				},
+				winner: {
+					new_rating: 1000,
+					score: winner_score,
+					uid: winner_uid,
+					username: winner_name
+				}
+			})
+			alert("Game Added!!");
+			mainView.router.loadPage('index.html');
+
+		} //End of push Game function
+
 
 		//var pointsAwarded="8";
 		//var pointsDeducted="8";
-
-		var date = new Date();
-
-		var Games = database.ref('Games/');
-		var Game = Games.child('Game')
-		Game.push({
-			date: date,
-			loser: {
-				new_rating: 1000,
-				score: opponent_score,
-				uid: opponent_uid,
-				username: opponent_name
-			},
-			winner: {
-				new_rating: 1000,
-				score: user_score,
-				uid: user_uid,
-				username: displayName
-			}
-		})
-		alert("Game Added!!");
-
-		mainView.router.loadPage('index.html');
+		pushGame();
 
 	});
 	// ==========End of Add Score================
