@@ -1,179 +1,157 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<title>CMU PingPong</title>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-	rel="stylesheet">
-	<link rel="stylesheet" href="css/framework7.material.min.css">
-	<link rel="stylesheet" href="css/framework7.material.colors.min.css">
-	<!-- Path to your custom app styles-->
-	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
-	<script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
-	<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
-	<link rel="stylesheet" href="css/my-app.css">
-	<!-- <script type="text/javascript" src="js/test.js"></script> -->
 
-</head>
-<body>
-	<!-- Status bar overlay for fullscreen mode-->
-	<div class="statusbar-overlay"></div>
-	<!-- Panels overlay-->
-	<div class="panel-overlay"></div>
-	<!-- Right panel with cover effect-->
-	<div class="panel panel-right panel-cover">
-		<div class="content-block">
-			<p>Account Info</p>
-			<p id="sign-in-status"></p>
-			<p id="account-details"></p>
-			<p><a href="#AddGame" class="link">Add Game</a></p>
-			<p><a href="#" class="link">Leader Board</a></p>
-			<p><a href="auth.html" class="link open-login-screen">Sign In</a></p>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>CMU PingPong</title>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="css/framework7.material.min.css">
+		<link rel="stylesheet" href="css/framework7.material.colors.min.css">
+		<!-- Path to your custom app styles-->
+		<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
+		<script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
+		<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
+		<link rel="stylesheet" href="css/my-app.css">
+		<!-- <script type="text/javascript" src="js/test.js"></script> -->
+	</head>
+
+	<body>
+		<!-- Status bar overlay for fullscreen mode-->
+		<div class="statusbar-overlay"></div>
+		<!-- Panels overlay-->
+		<div class="panel-overlay"></div>
+		<!-- Right panel with cover effect-->
+		<div class="panel panel-right panel-cover">
+			<div class="content-block">
+				<p>Account Info</p>
+				<p id="sign-in-status"></p>
+				<p id="account-details"></p>
+				<p><a href="add-game.html" class="link close-panel">Add Game</a></p>
+				<p><a href="players.html" class="link close-panel">Leader Board</a></p>
+				<p>
+					<a href="auth.html" class="link open-login-screen close-panel" id="auth"></a>
+				</p>
+				<span id="log-out"></span>
+			</div>
 		</div>
-	</div>
-	<!-- Views-->
-	<div class="views">
-		<!-- Your main view, should have "view-main" class-->
-		<div class="view view-main">
+		<!-- Views-->
+		<div class="views">
+			<!-- Your main view, should have "view-main" class-->
+			<div class="view view-main">
+				<!-- Pages, -->
+				<div class="pages navbar-fixed">
+					<!-- Page, data-page contains page name-->
+					<div data-page="index" class="page">
+						<!-- Top Navbar-->
+						<div class="navbar">
+							<div class="navbar-inner" data-page="index">
 
-			<!-- Pages, -->
-			<div class="pages navbar-fixed">
-				<!-- Page, data-page contains page name-->
-				<div data-page="index" class="page">
-					<!-- Top Navbar-->
-					<div class="navbar">
-						<div class="navbar-inner" data-page="index">
+								<div class="center">CMU PINGPONG</div>
 
-							<div class="center">CMU PINGPONG</div>
+								<div class="right">
 
-							<div class="right">
-
-								<a href="#" class="link icon-only open-panel" data-panel="right">
-									<i class="icon icon-bars"></i>
-								</a>
+									<a href="#" class="link icon-only open-panel" data-panel="right">
+										<i class="icon icon-bars"></i>
+									</a>
+								</div>
 							</div>
 						</div>
-					</div>
-					<!-- End of Top Nav Bar -->
+						<!-- End of Top Nav Bar -->
 
-					<!-- Floating Action Button -->
-					<a href="AddGame.html" data-page="index" class="floating-button color-blue">
-						<i class="icon icon-plus"></i>
-					</a>
-					<!-- EOf Floating Action Button -->
-					<!-- Scrollable page content-->
-					<div class="page-content pull-to-refresh-content" data-ptr-distance="55">
-						<!-- Default pull to refresh layer-->
-						    <div class="pull-to-refresh-layer">
-						      <div class="preloader"></div>
-						      <div class="pull-to-refresh-arrow"></div>
-						    </div>
+						<!-- Floating Action Button -->
+						<a href="add-game.html" data-page="index" class="floating-button color-blue">
+							<i class="icon icon-plus"></i>
+						</a>
+						<!-- EOf Floating Action Button -->
+						<!-- Scrollable page content-->
+						<div class="page-content pull-to-refresh-content" data-ptr-distance="55">
+							<!-- Default pull to refresh layer-->
+							<div class="pull-to-refresh-layer">
+								<div class="preloader"></div>
+								<div class="pull-to-refresh-arrow"></div>
+							</div>
 
-						<!-- Leader Board -->
-						<div class="content-block-title">Ping Pong Ratings</div>
-						<div class="content-block">
-							<!-- Card -->
-							<div class="card">
-								<div class="card-header">Leader Board:</div>
+							<!-- Leader Board -->
+							<div class="content-block-title">Ping Pong Ratings</div>
+							<div class="content-block">
+								<!-- Card -->
+								<div class="card">
+									<div class="card-header">Leader Board:</div>
 
-								<div class="card-content">
-									<div class="list-block media-list">
-										<ul>
-											<li class="item-content">
-												<div class="item-media">
-													<!-- <i class="material-icons md-48">account_circle</i> -->
-													<img src="img/account_circle.svg" width="44">
-												</div>
-												<div class="item-inner">
-													<div class="item-title-row">
-														<div class="item-title">Player 1</div>
-													</div>
-													<div class="item-subtitle">info</div>
-												</div>
-											</li>
-											<li class="item-content">
-												<div class="item-media">
-													<img src="img/account_circle.svg" width="44">
-												</div>
-												<div class="item-inner">
-													<div class="item-title-row">
-														<div class="item-title">Player 2</div>
-													</div>
-													<div class="item-subtitle">Info</div>
-												</div>
-											</li>
-											<li class="item-content">
-												<div class="item-media">
-													<img src="img/account_circle.svg" width="44">
-												</div>
-												<div class="item-inner">
-													<div class="item-title-row">
-														<div class="item-title">Player 3</div>
-													</div>
-													<div class="item-subtitle">Info</div>
-												</div>
-											</li>
-
-										</ul>
+									<div class="card-content player-list">
+										<div class="list-block media-list">
+											<ul></ul>
+										</div>
+									</div>
+									<div class="card-footer">
+										<span class="date"></span>
+										<a href="players.html"><span>More</span></a>
 									</div>
 								</div>
-
-								<div class="card-footer">
-									<span>Date</span>
-									<span id="log-out"></span>
-								</div>
 							</div>
-						</div>
-						<!-- End of Card -->
-						<!-- End of Leader board -->
+							<!-- End of Card -->
+							<!-- End of Leader board -->
 
-						<div class="content-block-title">Navigation?</div>
-						<div class="list-block">
-							<ul>
-								<li><a href="#AddGame" class="item-link">
-									<div class="item-content">
-										<div class="item-inner">
-											<div class="item-title">Add Game</div>
-										</div>
-									</div></a></li>
-										<li><a href="Players.html" class="item-link">
+							<div class="content-block-title">Navigation?</div>
+							<div class="list-block">
+								<ul>
+									<li>
+										<a href="auth.html" class="item-link sign-in auth">
+											<div class="item-content">
+												<div class="item-inner">
+													<div class="item-title" id="login-screen"></div>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="add-game.html" class="item-link">
+											<div class="item-content">
+												<div class="item-inner">
+													<div class="item-title">Add Game</div>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="players.html" class="item-link">
 											<div class="item-content">
 												<div class="item-inner">
 													<div class="item-title">Players</div>
 												</div>
-											</div></a>
-										</li>
-										<li><a href="auth.html" class="item-link sign-in auth">
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="timeline.html" class="item-link">
 											<div class="item-content">
 												<div class="item-inner">
-													<div class="item-title" id="auth"></div>
+													<div class="item-title">Timeline</div>
 												</div>
-											</div></a>
-										</li>
-										</ul>
-									</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<!-- EOf page-content-Index-->
+					</div>
+					<!-- EOf page-Index -->
 
-								</div><!-- EOf page-content-Index-->
-							</div><!-- EOf page-Index -->
+				</div>
+				<!-- EOf Pages -->
 
-							<!-- AddGame Page-->
+			</div>
+			<!-- EOf view-main -->
+		</div>
+		<!-- EOf Views -->
+		<!-- Path to Framework7 Library JS-->
+		<script type="text/javascript" src="js/framework7.min.js"></script>
+		<!-- Path to your app js-->
+		<script type="text/javascript" src="js/my-app.js"></script>
+	</body>
 
-
-						</div><!-- EOf Pages -->
-
-					</div> <!-- EOf view-main -->
-				</div><!-- EOf Views -->
-
-				<!-- Path to Framework7 Library JS-->
-				<script type="text/javascript" src="js/framework7.min.js"></script>
-				<!-- Path to your app js-->
-				<script type="text/javascript" src="js/my-app.js"></script>
-
-				<script id="__bs_script__">//<![CDATA[
-    document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.8'><\/script>".replace("HOST", location.hostname));
-//]]></script>
-			</body>
-			</html>
+</html>
