@@ -1,6 +1,13 @@
 // Initialize your app
 var myApp = new Framework7({
-	material: true
+	material: true,
+
+	onPageInit: function(app, page) {
+		if (page.name === 'index') {
+			//Do something here with home page
+
+		}
+	}
 	// modalCloseByOutside:true,
 	// pushState:true
 });
@@ -21,7 +28,7 @@ var user = firebase.auth().currentUser;
 var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main', {
-	// domCache: true //enable inline pages
+	domCache: true //enable inline pages
 
 });
 window.addEventListener('load', function() {
@@ -41,7 +48,7 @@ $$(document).on('page:init', function(e) {
 	}
 	if (page.name === 'players') {
 
-		playerContent(1000, 'rating');
+		playerContent(100, 'rating');
 
 	}
 	if (page.name === 'login-screen') {
@@ -74,6 +81,7 @@ $$('#log-out').on('click', function(e) {
 	// mainView.router.reloadPreviousPage('index.html');
 	alert('sign out successful');
 	// mainView.router.refreshPage();
+	mainView.router.loadPage('index.html');
 	// mainView.router.reloadloadPage(ignoreCache = true, 'index.html');
 });
 
@@ -124,13 +132,12 @@ myApp.onPageInit('add-game', function(page) {
 		var UserformData = myApp.formToData('#UserScoreForm'); // formData is an Object
 		var user_uid = user.uid;
 		var user_name = user.displayName;
-		var user_score = UserformData["UserScore"];
+		var user_score = parseInt(UserformData["UserScore"]);
 
 		//Opponent Data
 		var OpponentformData = myApp.formToData('#OpponentScoreForm');
 		var opponent_name = OpponentformData["OpponentName"];
-		var opponent_score = OpponentformData["OpponentScore"];
-		// var opponent_uid = 'opponentUserId';
+		var opponent_score = parseInt(OpponentformData["OpponentScore"]);
 
 		var player_ref = database.ref('PlayerProfile/');
 		player_ref.orderByChild("displayName").equalTo(opponent_name).on("child_added", function(snapshot) {
@@ -153,7 +160,9 @@ myApp.onPageInit('add-game', function(page) {
 
 		function findWinner() {
 
-			if (user_score < opponent_score) {
+			console.log('12 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+			if (user_score > opponent_score) {
+				console.log('13 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 
 				winner_score = user_score;
 				winner_uid = user_uid;
@@ -162,12 +171,11 @@ myApp.onPageInit('add-game', function(page) {
 				loser_score = opponent_score;
 				loser_uid = opponent_uid;
 				loser_name = opponent_name;
-				var player_ref = database.ref('PlayerProfile/' + opponent_name);
-				myApp.alert('winner first:' + winner_score);
-				myApp.alert('loser first:' + loser_score);
-				myApp.alert('oppnent:' + player_ref);
+				console.log();
+				('User Won with :' + winner_score + ' Opponent lost with:' + loser_score);
 
-			} else if (user_score > opponent_score) {
+			} else {
+				console.log('14 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 				winner_score = opponent_score;
 				winner_uid = opponent_uid;
 				winner_name = opponent_name;
@@ -175,11 +183,7 @@ myApp.onPageInit('add-game', function(page) {
 				loser_score = user_score;
 				loser_uid = user_uid;
 				loser_name = user_name;
-				myApp.alert('winner opp:' + winner_score);
-				myApp.alert('loser user:' + loser_score);
-
-			} else {
-				myApp.alert('No winner')
+				console.log('Opponent Won with:' + winner_score + ' User lost with: ' + loser_score);
 			}
 		}
 
@@ -220,67 +224,69 @@ myApp.onPageInit('add-game', function(page) {
 			//Evaluate winner rating and loser rating
 			database.ref('/PlayerProfile/' + user_uid).once('value').then(function(snapshot) {
 
-			var user_rating = snapshot.val().rating;
+				var user_rating = snapshot.val().rating;
 
-			console.log('This is the user_score at the point '+ user_score+'This is the opponent_score '+ opponent_score);
+				console.log('1 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 
-			if (user_score < opponent_score) {
+				if (user_score > opponent_score) {
+					console.log(' 2 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 
-				console.log('Winner is '+user_name+'with as score of '+user_score);
+					console.log('Winner is ' + user_name + ' with as score of ' + user_score);
 
-				winner_rating = user_rating;
-				loser_rating = opponent_rating;
-				myApp.alert('user_rating:' + winner_rating + 'opponent_rating:' + loser_rating);
+					winner_rating = user_rating;
+					loser_rating = opponent_rating;
+					// myApp.alert('user_rating:' + winner_rating + 'opponent_rating:' + loser_rating);
 
-			} else if (user_score > opponent_score) {
+				} else {
+					console.log(' 3 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+					console.log('Winner is ' + opponent_name + 'with as score of ' + opponent_score);
 
-				console.log('Winner is '+opponent_name+'with as score of '+opponent_score);
+					winner_rating = opponent_rating;
+					loser_rating = user_rating
 
-				winner_rating = opponent_rating;
-				loser_rating = user_rating
+					// myApp.alert('user_rating:' + loser_rating + 'opponent_rating:' + winner_rating);
+				}
 
-				myApp.alert('user_rating:' + winner_rating + 'opponent_rating:' + loser_rating);
+				points = (winner_score - loser_score);
 
-			} else {
+				console.log('points ' + points);
 
-				myApp.alert('No winner')
-			}
+				var diffInRatings = (winner_rating - loser_rating);
 
-			points = (winner_score - loser_score);
+				console.log('diffInRating :' + diffInRatings);
 
-			console.log('points ' + points);
+				var changeInRating = ((0.000128 * (diffInRatings * diffInRatings)) - (0.064 * diffInRatings) + 8);
 
-			var diffInRatings = Math.abs(winner_rating - loser_rating);
-			console.log('diffInRating :' + diffInRatings);
+				console.log('changeInRating :' + changeInRating);
 
-			var changeInRating = (Math.pow((0.000128 * diffInRatings), 2) - ((0.064 * diffInRatings) + 8));
-			console.log('changeInRating :' +changeInRating);
+				if (winner_rating != loser_rating) {
+					pointsAwarded = (points / 10);
+					console.log(' Points Awarded  ' + pointsAwarded);
 
-			if (points > 0) {
-				pointsAwarded = (points / 10);
-				console.log('pointsAwareds  ' + pointsAwarded);
+					new_winner_rating = (winner_rating + changeInRating + pointsAwarded);
+					console.log('old winner rating  ' + winner_rating + ' updated winner rating ' + new_winner_rating);
 
-				new_winner_rating = (winner_rating + changeInRating + pointsAwarded);
-				console.log('winner_rating  ' + winner_rating+'new_winner_rating '+ new_winner_rating);
+					new_loser_rating = (loser_rating - changeInRating);
+					console.log('old loser rating  ' + loser_rating + 'updated loser rating ' + new_loser_rating);
 
-				new_loser_rating = loser_rating;
-				console.log('loser_rating  ' + loser_rating+'new_loser_rating '+ new_loser_rating);
+					myApp.alert('Your New Rating is :' + new_winner_rating);
 
-				myApp.alert(new_winner_rating + ': ' + new_loser_rating);
+				} else if (winner_rating == loser_rating) {
+					pointsAwarded = (points / 10);
+					console.log(' 2 pointsAwarded  ' + pointsAwarded);
 
-			} else if(points=0){
-				new_winner_rating = (winner_rating);
-				new_loser_rating = (loser_rating);
-				myApp.alert(new_winner_rating + ': nothing changed' + new_loser_rating);
+					new_winner_rating = (winner_rating + pointsAwarded);
+					new_loser_rating = (loser_rating - pointsAwarded);
+					myApp.alert(new_winner_rating + ':Same Rating Players' + new_loser_rating);
 
-			}else {
-				myApp.alert('Something is wrong')
-			}
+				} else {
+					myApp.alert('Something is wrong')
+				}
 
-			var updates = {};
-			updates['PlayerProfile/' + loser_uid + '/rating'] = new_loser_rating;
-			updates['PlayerProfile/' + winner_uid + '/rating'] = new_winner_rating;
-			return database.ref().update(updates);
+				var updates = {};
+				updates['PlayerProfile/' + loser_uid + '/rating'] = new_loser_rating;
+				updates['PlayerProfile/' + winner_uid + '/rating'] = new_winner_rating;
+				return database.ref().update(updates);
 
 			});
 		}
@@ -414,7 +420,7 @@ playerContent = function(list_no, sort) {
 	// list_no = 100;
 	var player_ref = database.ref('PlayerProfile/');
 
-	player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapshot) {
+	player_ref.orderByChild(sort).limitToLast(list_no).on("value", function(snapshot) {
 		snapshot.forEach(function(player_snap) {
 			var ratings = player_snap.child("rating").val();
 			var players = player_snap.child("displayName").val();
