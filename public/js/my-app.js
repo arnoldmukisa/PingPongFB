@@ -1,15 +1,18 @@
 // Initialize your app
 var myApp = new Framework7({
 	material: true,
-
-	onPageInit: function(app, page) {
-		if (page.name === 'index') {
-			//Do something here with home page
-
-		}
-	}
+	modalTitle: 'Table Tenis',
+	// onPageInit: function(app, page) {
+	// },
 	// modalCloseByOutside:true,
 	// pushState:true
+});
+// Export selectors engine
+var $$ = Dom7;
+// Add view
+var mainView = myApp.addView('.view-main', {
+	domCache: true //enable inline pages
+
 });
 // Initialize Firebase
 var config = {
@@ -24,15 +27,8 @@ firebase.initializeApp(config);
 var database = firebase.database();
 var user = firebase.auth().currentUser;
 
-// Export selectors engine
-var $$ = Dom7;
-// Add view
-var mainView = myApp.addView('.view-main', {
-	domCache: true //enable inline pages
-
-});
 window.addEventListener('load', function() {
-	playerContent(3, 'rating');
+	playerContentIndex(3, 'rating');
 	authState();
 
 });
@@ -42,13 +38,13 @@ $$(document).on('page:init', function(e) {
 	var page = e.detail.page;
 	// Player Page
 	if (page.name === 'index') {
-
-		playerContent(3, 'rating');
+		playerContentIndex(3, 'rating');
+		authState();
 
 	}
 	if (page.name === 'players') {
 
-		playerContent(100, 'rating');
+		playerContent('rating');
 
 	}
 	if (page.name === 'login-screen') {
@@ -71,8 +67,22 @@ $$(document).on('page:init', function(e) {
 		ui.start('#firebaseui-auth-container', uiConfig);
 
 	}
+	if (page.name === 'add-game') {
+		loadAddGame();
+		if (!myApp.device.ios) {
+			$$(page.container).find('input, textarea').on('focus', function(event) {
+				var container = $$(event.target).closest('.page-content');
+				var elementOffset = $$(event.target).offset().top;
+				var pageOffset = container.scrollTop();
+				var newPageOffset = pageOffset + elementOffset - 81;
+				setTimeout(function() {
+					container.scrollTop(newPageOffset, 300);
+				}, 700);
+			});
+		}
+	}
 
-})
+});
 
 $$('#log-out').on('click', function(e) {
 	firebase.auth().signOut();
@@ -82,6 +92,7 @@ $$('#log-out').on('click', function(e) {
 	alert('sign out successful');
 	// mainView.router.refreshPage();
 	mainView.router.loadPage('index.html');
+	$$("#log-out").hide();
 	// mainView.router.reloadloadPage(ignoreCache = true, 'index.html');
 });
 
@@ -96,9 +107,10 @@ myApp.onPageInit('about', function(page) {
 });
 
 
-
 // =================Add Game Page=====================
-myApp.onPageInit('add-game', function(page) {
+// myApp.onPageInit('add-game', function(page) {
+function loadAddGame() {
+
 	// Populating Opponents Name Field
 	var autocompleteDropdownAll = myApp.autocomplete({
 		input: '#autocomplete-dropdown-all',
@@ -318,14 +330,14 @@ myApp.onPageInit('add-game', function(page) {
 
 		name = user.displayName;
 
-		$$('#welcomeName').html('Hi' + ' ' + name);
+		$$('.welcomeName').html('Hi' + ' ' + name);
 
 	} else {
-		$$('#welcomeName').html('No account');
+		$$('.welcomeName').html('No account');
 
 	}
 
-});
+}
 // ========================End of Add Page Init===========================
 
 // Generate dynamic page
@@ -371,7 +383,7 @@ authState = function() {
 			user.getToken().then(function(accessToken) {
 				document.getElementById('sign-in-status').textContent = 'Signed in';
 				document.getElementById('log-out').textContent = 'log out';
-				document.getElementById('login-screen').textContent = 'Sign out';
+				// document.getElementById('login-screen').textContent = 'Sign out';
 				var authLink = $$('a').filter(function(index, el) {
 					return $$(this).hasClass('auth');
 				})
@@ -405,7 +417,11 @@ authState = function() {
 			// User is signed out.
 			document.getElementById('sign-in-status').textContent = 'Signed out';
 			document.getElementById('login-screen').textContent = 'Sign in';
-			document.getElementById('account-details').textContent = 'null';
+			// document.getElementById('account-details').textContent = 'null';
+			var loginLink = $$('div').filter(function(index, el) {
+				return $$(this).hasClass('loginLink');
+			})
+			loginLink.html('Sign in');
 		}
 	}, function(error) {
 		console.log(error);
@@ -415,12 +431,12 @@ authState = function() {
 
 
 // ============================================Generate Player List=============================
-playerContent = function(list_no, sort) {
+playerContent = function(sort) {
 
 	// list_no = 100;
 	var player_ref = database.ref('PlayerProfile/');
 
-	player_ref.orderByChild(sort).limitToLast(list_no).on("value", function(snapshot) {
+	player_ref.orderByChild(sort).on("value", function(snapshot) {
 		snapshot.forEach(function(player_snap) {
 			var ratings = player_snap.child("rating").val();
 			var players = player_snap.child("displayName").val();
@@ -450,6 +466,46 @@ playerContent = function(list_no, sort) {
 
 		});
 	});
-
-
 };
+playerContentIndex = function(list_no, sort) {
+
+	// list_no = 100;
+	var player_ref = database.ref('PlayerProfile/');
+
+	player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapshot) {
+		snapshot.forEach(function(player_snap) {
+			var ratings = player_snap.child("rating").val();
+			var players = player_snap.child("displayName").val();
+			var matches = player_snap.child("matches").val();
+
+			// Random image
+			var picURL = './img/account_circle.svg';
+			// Random song
+			var player = players;
+			// Random author
+			var rating = ratings;
+
+			var match = matches;
+			// List item html
+			var itemHTML = '<li class="item-content">' +
+				'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
+				'<div class="item-inner">' +
+				'<div class="item-title-row">' +
+				'<div class="item-title">' + player + '</div>' +
+				'</div>' +
+				'<div class="item-subtitle">' + '|' + match + '|' + '	' + rating + '</div>' +
+				'</div>' +
+				'</li>';
+			// Prepend new list element
+			$$('.player-list-index').find('ul').prepend(itemHTML);
+			// When loading done, we need to reset it
+		});
+	});
+	// player_ref.orderByChild(sort).limitToLast(list_no).on("value", function(snapshot) {
+	//
+	// });
+};
+// var player_ref = database.ref('PlayerProfile/');
+// player_ref.on("value", function(snapshot) {
+// 	playerContentIndex();
+// });
