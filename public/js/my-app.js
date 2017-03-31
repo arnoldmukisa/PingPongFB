@@ -24,6 +24,22 @@ var config = {
 };
 
 firebase.initializeApp(config);
+
+var uiConfig = {
+	credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+	signInSuccessUrl: 'index.html',
+	signInOptions: [
+		firebase.auth.EmailAuthProvider.PROVIDER_ID,
+		firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+		firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+		firebase.auth.TwitterAuthProvider.PROVIDER_ID
+	],
+	// Terms of service url.
+	tosUrl: 'services.html'
+};
+// Initialize the FirebaseUI Widget using Firebase.
+var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
 var database = firebase.database();
 var user = firebase.auth().currentUser;
 
@@ -48,24 +64,8 @@ $$(document).on('page:init', function(e) {
 
 	}
 	if (page.name === 'login-screen') {
-
-		var uiConfig = {
-			credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-			signInSuccessUrl: 'index.html',
-			signInOptions: [
-				firebase.auth.EmailAuthProvider.PROVIDER_ID,
-				firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-				firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-				firebase.auth.TwitterAuthProvider.PROVIDER_ID
-			],
-			// Terms of service url.
-			tosUrl: 'services.html'
-		};
-		// Initialize the FirebaseUI Widget using Firebase.
-		var ui = new firebaseui.auth.AuthUI(firebase.auth());
 		// The start method will wait until the DOM is loaded.
 		ui.start('#firebaseui-auth-container', uiConfig);
-
 	}
 	if (page.name === 'add-game') {
 		loadAddGame();
@@ -93,6 +93,7 @@ $$('#log-out').on('click', function(e) {
 	// mainView.router.refreshPage();
 	mainView.router.loadPage('index.html');
 	$$("#log-out").hide();
+	$$(".welcomeCard").children().hide();
 	// mainView.router.reloadloadPage(ignoreCache = true, 'index.html');
 });
 
@@ -332,6 +333,7 @@ function loadAddGame() {
 
 		$$('.welcomeName').html('Hi' + ' ' + name);
 
+
 	} else {
 		$$('.welcomeName').html('No account');
 
@@ -372,60 +374,74 @@ function createContentPage() {
 // ===============================FUNCTIONS================================================//
 authState = function() {
 	firebase.auth().onAuthStateChanged(function(user) {
-		if (user) {
-			// User is signed in.
-			var displayName = user.displayName;
-			var email = user.email;
-			var emailVerified = user.emailVerified;
-			var photoURL = user.photoURL;
-			var uid = user.uid;
-			var providerData = user.providerData;
-			user.getToken().then(function(accessToken) {
-				document.getElementById('sign-in-status').textContent = 'Signed in';
-				document.getElementById('log-out').textContent = 'log out';
-				// document.getElementById('login-screen').textContent = 'Sign out';
-				var authLink = $$('a').filter(function(index, el) {
-					return $$(this).hasClass('auth');
+			if (user) {
+				// User is signed in.
+				var displayName = user.displayName;
+				var email = user.email;
+				var emailVerified = user.emailVerified;
+				var photoURL = user.photoURL;
+				var uid = user.uid;
+				var providerData = user.providerData;
+				user.getToken().then(function(accessToken) {
+					document.getElementById('sign-in-status').textContent = 'Signed in';
+					document.getElementById('log-out').textContent = 'log out';
+					// document.getElementById('login-screen').textContent = 'Sign out';
+					var authLink = $$('a').filter(function(index, el) {
+						return $$(this).hasClass('auth');
+					})
+					authLink.remove();
+
+					$$('.welcomeCard').children().show();
+
+					var welcomeHome = $$('div').filter(function(index, el) {
+						return $$(this).hasClass('welcomeHome');
+					})
+					welcomeHome.html(' ' + displayName);
+
+					var ratingHome = $$('div').filter(function(index, el) {
+						return $$(this).hasClass('ratingHome');
+					})
+					ratingHome.html(' ' + '|0| 1000');
+
+				});
+				console.log(displayName); // for dev purposes
+				//Create Profile Table if does not exists
+				var PlayerProfile = database.ref('PlayerProfile/');
+				PlayerProfile.once('value', function(snapshot) {
+					if (snapshot.hasChild(uid)) {} // log.console('exists')
+					else {
+						var PlayerProfile = database.ref('PlayerProfile/' + uid);
+						PlayerProfile.set({
+							rating: 1000,
+							matches: 0,
+							displayName: displayName
+						});
+						alert("Profle Created!");
+					}
+				});
+			} else {
+				// User is signed out.
+				document.getElementById('sign-in-status').textContent = 'Signed out';
+				// var signInStatus = $$('span').filter(function(index, el) {
+				// 	return $$(this).hasClass('sign-in-status');
+				// })
+				// signInStatus.html('Sign in');
+				// document.getElementById('login-screen').textContent = 'Sign in';
+				// document.getElementById('account-details').textContent = 'null';
+				var loginLink = $$('div').filter(function(index, el) {
+					return $$(this).hasClass('loginLink');
 				})
-				authLink.remove();
-				// document.getElementById('account-details').textContent = JSON.stringify({
-				// 	displayName: displayName,
-				// 	email: email,
-				// 	emailVerified: emailVerified,
-				// 	photoURL: photoURL,
-				// 	uid: uid,
-				// 	accessToken: accessToken,
-				// 	providerData: providerData
-				// }, null, '  ');
-			});
-			console.log(displayName); // for dev purposes
-			//Create Profile Table if does not exists
-			var PlayerProfile = database.ref('PlayerProfile/');
-			PlayerProfile.once('value', function(snapshot) {
-				if (snapshot.hasChild(uid)) {} // log.console('exists')
-				else {
-					var PlayerProfile = database.ref('PlayerProfile/' + uid);
-					PlayerProfile.set({
-						rating: 1000,
-						matches: 0,
-						displayName: displayName
-					});
-					alert("Profle Created!");
-				}
-			});
-		} else {
-			// User is signed out.
-			document.getElementById('sign-in-status').textContent = 'Signed out';
-			document.getElementById('login-screen').textContent = 'Sign in';
-			// document.getElementById('account-details').textContent = 'null';
-			var loginLink = $$('div').filter(function(index, el) {
-				return $$(this).hasClass('loginLink');
-			})
-			loginLink.html('Sign in');
-		}
-	}, function(error) {
-		console.log(error);
-	});
+				loginLink.html('Sign in');
+
+				var welcomeCard = $$('div').filter(function(index, el) {
+					return $$(this).hasClass('welcomeCard');
+				})
+				welcomeCard.remove();
+			}
+		},
+		function(error) {
+			console.log(error);
+		});
 };
 //==============================End of authState Function=================================
 
@@ -498,14 +514,6 @@ playerContentIndex = function(list_no, sort) {
 				'</li>';
 			// Prepend new list element
 			$$('.player-list-index').find('ul').prepend(itemHTML);
-			// When loading done, we need to reset it
 		});
 	});
-	// player_ref.orderByChild(sort).limitToLast(list_no).on("value", function(snapshot) {
-	//
-	// });
 };
-// var player_ref = database.ref('PlayerProfile/');
-// player_ref.on("value", function(snapshot) {
-// 	playerContentIndex();
-// });
