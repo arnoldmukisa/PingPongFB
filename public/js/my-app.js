@@ -81,20 +81,6 @@ $$(document).on('page:init', function(e) {
 			});
 		}
 	}
-	if (page.name === 'add-game') {
-		loadAddGame();
-		if (!myApp.device.ios) {
-			$$(page.container).find('input, textarea').on('focus', function(event) {
-				var container = $$(event.target).closest('.page-content');
-				var elementOffset = $$(event.target).offset().top;
-				var pageOffset = container.scrollTop();
-				var newPageOffset = pageOffset + elementOffset - 81;
-				setTimeout(function() {
-					container.scrollTop(newPageOffset, 300);
-				}, 700);
-			});
-		}
-	}
 
 });
 
