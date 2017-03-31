@@ -15,26 +15,35 @@
 		<script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
 		<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
 		<link rel="stylesheet" href="css/my-app.css">
+		<link rel="stylesheet" href="css/framework7.3dpanels.css">
 		<!-- <script type="text/javascript" src="js/test.js"></script> -->
 	</head>
 
-	<body>
+	<body class="theme-green">
 		<!-- Status bar overlay for fullscreen mode-->
 		<div class="statusbar-overlay"></div>
 		<!-- Panels overlay-->
 		<div class="panel-overlay"></div>
 		<!-- Right panel with cover effect-->
-		<div class="panel panel-right panel-cover">
-			<div class="content-block">
-				<p>Account Info</p>
-				<p id="sign-in-status"></p>
-				<p id="account-details"></p>
-				<p><a href="add-game.html" class="link close-panel">Add Game</a></p>
-				<p><a href="players.html" class="link close-panel">Leader Board</a></p>
-				<p>
-					<a href="auth.html" class="link open-login-screen close-panel" id="auth"></a>
-				</p>
-				<span id="log-out"></span>
+		<div class="panel panel-right panel-reveal bg-bluegray">
+
+			<div class="demo-card-header-pic">
+				<div style="background-image:url(img/account_circle.svg)" valign="bottom" class="card-header color-white no-border"><span class="sign-in-status"></span></div>
+				<!-- <div class="card-content"> -->
+				<div class="">
+					<!-- <div class="card-content-inner"> -->
+					<div class="content-block">
+						<p class="color-gray">Account Info</p>
+						<p id="sign-in-status"></p>
+						<p id="account-details"></p>
+						<p><a href="add-game.html" class="link close-panel">Add Game</a></p>
+						<p><a href="players.html" class="link close-panel">Leader Board</a></p>
+						<p>
+							<a href="auth.html" class="link open-login-screen close-panel" id="auth"></a>
+						</p>
+						<span id="log-out"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<!-- Views-->
@@ -62,21 +71,22 @@
 						<!-- End of Top Nav Bar -->
 
 						<!-- Floating Action Button -->
-						<a href="add-game.html" data-page="index" class="floating-button color-blue">
+						<a href="add-game.html" data-page="index" class="floating-button">
 							<i class="icon icon-plus"></i>
 						</a>
 						<!-- EOf Floating Action Button -->
 						<!-- Scrollable page content-->
 						<div class="page-content">
-							<!-- Default pull to refresh layer-->
-							<!-- <div class="pull-to-refresh-layer">
-								<div class="preloader"></div>
-								<div class="pull-to-refresh-arrow"></div>
-							</div> -->
+
+							<div class="center card-header bg-bluegray color-white welcomeCard">
+								<div class="welcomeHome"></div>
+								<div class="ratingHome"></div>
+							</div>
 
 							<!-- Leader Board -->
 							<div class="content-block-title">Rating System</div>
-							<div class="content-block">
+							<div class="content-block color-bluegray">
+
 								<!-- Card -->
 								<div class="card">
 									<div class="card-header">Leader Board:</div>
@@ -86,9 +96,9 @@
 											<ul></ul>
 										</div>
 									</div>
-									<div class="card-footer">
+									<div class="card-footer color-bluegray">
 										<span class="date"></span>
-										<a href="players.html"><span>More</span></a>
+										<a href="players.html"><span>MORE</span></a>
 									</div>
 								</div>
 							</div>
@@ -96,11 +106,12 @@
 							<!-- End of Leader board -->
 
 							<div class="content-block-title">Navigation?</div>
-							<div class="list-block">
+							<div class="list-block  color-bluegray">
 								<ul>
 									<li>
-										<a href="auth.html" class="item-link sign-in auth">
+										<a href="auth.html" data-reload="true" data-ignore-cache="true" class="item-link sign-in auth">
 											<div class="item-content">
+												<div class="item-media"><i class="f7-icons">login</i></div>
 												<div class="item-inner">
 													<div class="item-title loginLink" id="login-screen"></div>
 												</div>
@@ -110,6 +121,7 @@
 									<li>
 										<a href="add-game.html" class="item-link">
 											<div class="item-content">
+												<div class="item-media"><i class="f7-icons">add_round_fill</i></div>
 												<div class="item-inner">
 													<div class="item-title">Add Game</div>
 												</div>
@@ -119,6 +131,7 @@
 									<li>
 										<a href="players.html" class="item-link">
 											<div class="item-content">
+												<div class="item-media"><i class="f7-icons">persons_fill</i></div>
 												<div class="item-inner">
 													<div class="item-title">Players</div>
 												</div>
@@ -128,6 +141,7 @@
 									<li>
 										<a href="timeline.html" class="item-link">
 											<div class="item-content">
+												<div class="item-media"><i class="f7-icons">time_fill</i></div>
 												<div class="item-inner">
 													<div class="item-title">Timeline</div>
 												</div>
@@ -152,6 +166,7 @@
 		<script type="text/javascript" src="js/framework7.min.js"></script>
 		<!-- Path to your app js-->
 		<script type="text/javascript" src="js/my-app.js"></script>
+		<script src="js/framework7.3dpanels.js"></script>
 	</body>
 
 </html>

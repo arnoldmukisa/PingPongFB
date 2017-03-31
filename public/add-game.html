@@ -19,7 +19,12 @@
     <!-- EOf add-game Navbar -->
     <!-- add-game Toolbar-->
     <div class="toolbar toolbar-bottom">
-        <div class="toolbar-inner"><a href="index.html" class="back link" data-reload="true" data-ignore-cache="true">Home</a><a href="players.html" class="link">Players</a></div>
+        <div class="toolbar-inner">
+            <a href="index.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">home</i></a>
+            <a href="add-game.html" class="link"><i class="f7-icons">add_round</i></a>
+            <a href="players.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">persons</i></a>
+            <a href="timeline.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">time</i></a>
+        </div>
     </div>
     <!-- EOf add-game toolbar -->
 
@@ -30,10 +35,12 @@
             <div class="preloader"></div>
             <div class="pull-to-refresh-arrow"></div>
         </div>
-        <div class="content-block-title">GAME INFO</div>
+        <div class="content-block-title">Enter Your Score:</div>
 
         <div class="card">
-            <div class="center card-header welcomeName"></div>
+
+            <div class="center card-header bg-bluegray color-white welcomeName"></div>
+
             <div class="card-content">
                 <div class="card-content-inner">
 
@@ -53,72 +60,57 @@
                     </form>
                 </div>
             </div>
-            <div class="card-footer">Your Score is<i class="rating"> </i> <i class="material-icons">grade</i></div>
+            <!-- <div class="card-footer">Your rating is<i class="rating"> </i> <i class="material-icons">grade</i></div> -->
         </div>
 
+        <div class="content-block-title">Enter Opponent's Score</div>
 
-        <form id="OpponentScoreForm" class="list-block ajax-submit">
-            <ul>
-                <li>
-                    <div class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title label">Opponent</div>
-                            <div class="item-input">
-                                <input type="text" name="OpponentName" placeholder="Opponent's Name" id="autocomplete-dropdown-all">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title label">Score</div>
-                            <div class="item-input">
-                                <input type="text" name="OpponentScore" placeholder="Opponent's Score">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </form>
+        <div class="card">
+            <div class="center card-header bg-bluegray color-white">Opponent</div>
+            <div class="card-content">
+                <div class="card-content-inner">
+
+                    <form id="OpponentScoreForm" class="list-block ajax-submit">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">Opponent's Name</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OpponentName" placeholder="Opponent's Name" id="autocomplete-dropdown-all">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">Opponnent's Score</div>
+                                        <div class="item-input">
+                                            <input type="text" name="OpponentScore" placeholder="Opponent's Score">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <div class="content-block">
-            <a href="#" class="form-to-data"><input type="submit" name="submit" class="button" value="ADD"></a>
+            <div class="row">
+                <div class="col-50">
+                    <a href="#" class="form-to-data"><input type="submit" name="submit" class="button button-big button-raised button-fill color-bluegray" value="ADD GAME"></a>
+                </div>
+                <div class="col-50">
+                    <a href="#" class=""><input type="" name="" class="button button-big button-raised color-bluegray" value="CLEAR"></a>
+                </div>
+            </div>
         </div>
 
-        <!-- <div class="content-block-title">Side panels</div> -->
-        <!-- <div class="content-block">
-    <div class="row">
-    <div class="col-50"><a href="#" data-panel="left" class="button open-panel">Left Panel</a></div>
-    <div class="col-50"><a href="#" data-panel="right" class="button open-panel">Right Panel</a></div>
-  </div>
-</div> -->
     </div>
     <!-- EOf Page Content -->
-
-
-</div>
-<!-- EOf Page-add-game -->
-</div>
-</div>
-</li>
-</ul>
-</form>
-
-<div class="content-block">
-    <a href="#" class="form-to-data"><input type="submit" name="submit" class="button" value="ADD"></a>
-</div>
-
-<!-- <div class="content-block-title">Side panels</div> -->
-<!-- <div class="content-block">
-    <div class="row">
-    <div class="col-50"><a href="#" data-panel="left" class="button open-panel">Left Panel</a></div>
-    <div class="col-50"><a href="#" data-panel="right" class="button open-panel">Right Panel</a></div>
-  </div>
-</div> -->
-</div>
-<!-- EOf Page Content -->
-
 
 </div>
 <!-- EOf Page-add-game -->

@@ -19,12 +19,29 @@
     <!-- EOf AddGame Navbar -->
     <!-- AddGame Toolbar-->
     <div class="toolbar toolbar-bottom">
-        <div class="toolbar-inner"><a href="index.html" class="link" data-reload="true" data-ignore-cache="true">Home</a><a href="timeline.html" class="link">My Games</a></div>
+        <div class="toolbar-inner">
+            <a href="index.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">home</i></a>
+            <a href="add-game.html" class="link"><i class="f7-icons">add_round</i></a>
+            <a href="players.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">persons</i></a>
+            <a href="timeline.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">time</i></a>
+        </div>
     </div>
     <!-- EOf AddGame toolbar -->
+    <form class="searchbar searchbar-init" data-search-list=".list-block-search" data-search-in=".item-title" data-found=".searchbar-found" data-not-found=".searchbar-not-found">
+        <div class="searchbar-input">
+            <input type="search" placeholder="Search">
+            <a href="#" class="searchbar-clear"></a>
+        </div>
+        <a href="#" class="searchbar-cancel">Cancel</a>
+    </form>
+
+    <div class="searchbar-overlay"></div>
 
     <!-- Scrollable page content-->
     <div class="page-content player-list">
+        <div class="content-block searchbar-not-found">
+            Nothing found
+        </div>
 
         <div class="list-block media-list">
             <ul></ul>
