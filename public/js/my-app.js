@@ -56,12 +56,9 @@ $$(document).on('page:init', function(e) {
 	if (page.name === 'index') {
 		playerContentIndex(3, 'rating');
 		authState();
-
 	}
 	if (page.name === 'players') {
-
 		playerContent('rating');
-
 	}
 	if (page.name === 'login-screen') {
 		// The start method will wait until the DOM is loaded.
@@ -85,19 +82,15 @@ $$(document).on('page:init', function(e) {
 });
 
 $$('#log-out').on('click', function(e) {
+
 	firebase.auth().signOut();
-	// Sign-out successful.
 	myApp.closePanel();
-	// mainView.router.reloadPreviousPage('index.html');
-	alert('sign out successful');
-	// mainView.router.refreshPage();
 	mainView.router.loadPage('index.html');
+	alert('Sign Out Successful');
 	$$("#log-out").hide();
-	$$(".welcomeCard").children().hide();
+	// $$(".welcomeCard").children().hide();
 	// mainView.router.reloadloadPage(ignoreCache = true, 'index.html');
 });
-
-// ===============================================End of Auth UI=====================================================
 
 // Callbacks to run specific code for specific pages, for example for About page:
 myApp.onPageInit('about', function(page) {
@@ -106,8 +99,6 @@ myApp.onPageInit('about', function(page) {
 		createContentPage();
 	});
 });
-
-
 // =================Add Game Page=====================
 // myApp.onPageInit('add-game', function(page) {
 function loadAddGame() {
@@ -390,18 +381,7 @@ authState = function() {
 						return $$(this).hasClass('auth');
 					})
 					authLink.remove();
-
-					$$('.welcomeCard').children().show();
-
-					var welcomeHome = $$('div').filter(function(index, el) {
-						return $$(this).hasClass('welcomeHome');
-					})
-					welcomeHome.html(' ' + displayName);
-
-					var ratingHome = $$('div').filter(function(index, el) {
-						return $$(this).hasClass('ratingHome');
-					})
-					ratingHome.html(' ' + '|0| 1000');
+					displayRatingHome('show',displayName);
 
 				});
 				console.log(displayName); // for dev purposes
@@ -517,3 +497,36 @@ playerContentIndex = function(list_no, sort) {
 		});
 	});
 };
+function displayRatingHome(status,name) {
+
+	var welcomeHTML=	'<div class="center card-header bg-green color-white">'+
+											'<div class=""></div>'+
+											'<div class="ratingHome"></div>'+
+											'<div class=""></div>'+
+										'</div>';
+
+		// Prepend new list element
+		if (status=='show') {
+
+			$$('.welcomeCard').prepend(welcomeHTML);
+
+			var displayName = $$('div').filter(function(index, el) {
+				return $$(this).hasClass('welcomeHome');
+			})
+			displayName.html(' ' + name);
+
+			var ratingHome = $$('div').filter(function(index, el) {
+				return $$(this).hasClass('ratingHome');
+			})
+			ratingHome.html(' ' + '|0| 1000');
+		}
+
+		else if (status=='hide') {
+
+			welcomeHTML ='';
+			$$('.welcomeCard').prepend(welcomeHTML);
+		}
+
+		// When loading done, we need to reset it
+
+}
