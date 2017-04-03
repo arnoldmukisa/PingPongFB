@@ -7,15 +7,16 @@
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<title>Table Tennis</title>
-		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 		<link rel="stylesheet" href="css/framework7.material.min.css">
 		<link rel="stylesheet" href="css/framework7.material.colors.min.css">
 		<!-- Path to your custom app styles-->
 		<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
 		<script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
 		<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
+		<link rel="stylesheet" href="css/framework7-icons.css">
 		<link rel="stylesheet" href="css/my-app.css">
-		<link rel="stylesheet" href="css/framework7.3dpanels.css">
+		<!-- <link rel="stylesheet" href="css/framework7.3dpanels.css"> -->
 		<!-- <script type="text/javascript" src="js/test.js"></script> -->
 	</head>
 
@@ -24,28 +25,77 @@
 		<div class="statusbar-overlay"></div>
 		<!-- Panels overlay-->
 		<div class="panel-overlay"></div>
-		<!-- Right panel with cover effect-->
-		<div class="panel panel-right panel-reveal bg-bluegray">
+
+		<!-- Left panel with cover effect-->
+		<div class="panel panel-left panel-reveal bg-bluegray">
 
 			<div class="demo-card-header-pic">
+
 				<div style="background-image:url(img/account_circle.svg)" valign="bottom" class="card-header color-white no-border"><span class="sign-in-status"></span></div>
-				<!-- <div class="card-content"> -->
-				<div class="">
-					<!-- <div class="card-content-inner"> -->
-					<div class="content-block">
+
+				<div class="content-block">
 						<p class="color-gray">Account Info</p>
 						<p id="sign-in-status"></p>
 						<p id="account-details"></p>
-						<p><a href="add-game.html" class="link close-panel">Add Game</a></p>
-						<p><a href="players.html" class="link close-panel">Leader Board</a></p>
-						<p>
-							<a href="auth.html" class="link open-login-screen close-panel" id="auth"></a>
-						</p>
-						<span id="log-out"></span>
+						<!-- <span id="log-out"></span> -->
+				</div>				<!-- <div class="card-content"> -->
+					<div class="list-block">
+						<ul>
+							<li>
+								<a href="#login-screen" class="item-link sign-in auth close-panel">
+									<div class="item-content">
+										<div class="item-media"><i class="f7-icons">login</i></div>
+										<div class="item-inner">
+										<div class="item-title loginLink" id="login-screen"></div>
+										</div>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="add-game.html" class="item-link close-panel">
+									<div class="item-content">
+									<div class="item-media"><i class="f7-icons">add_round_fill</i></div>
+									<div class="item-inner">
+									<div class="item-title">Add Game</div>
+									</div>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="players.html" class="item-link close-panel">
+									<div class="item-content">
+									<div class="item-media"><i class="f7-icons">persons_fill</i></div>
+									<div class="item-inner">
+									<div class="item-title">Leader Board</div>
+									</div>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="timeline.html" class="item-link timelineLink close-panel">
+									<div class="item-content">
+									<div class="item-media"><i class="f7-icons">time_fill</i></div>
+									<div class="item-inner">
+									<div class="item-title">Timeline</div>
+									</div>
+									</div>
+								</a>
+							</li><li>
+								<a href="timeline.html" class="item-link log-out close-panel">
+									<div class="item-content">
+									<div class="item-media"><i class="f7-icons">log_out</i></div>
+									<div class="item-inner">
+									<div class="item-title">Logout</div>
+									</div>
+									</div>
+								</a>
+							</li>
+						</ul>
 					</div>
-				</div>
+
 			</div>
 		</div>
+
 		<!-- Views-->
 		<div class="views">
 			<!-- Your main view, should have "view-main" class-->
@@ -56,15 +106,21 @@
 					<div data-page="index" class="page">
 						<!-- Top Navbar-->
 						<div class="navbar">
+
 							<div class="navbar-inner" data-page="index">
 
-								<div class="center"></div>
-
-								<div class="right">
-
-									<a href="#" class="link icon-only open-panel" data-panel="right">
+								<div class="left">
+									<a href="#" class="link icon-only open-panel" data-panel="left">
 										<i class="icon icon-bars"></i>
 									</a>
+								</div>
+								<div class="navTitle center">Table Tennis</div>
+
+								<div class="right">
+								<a href="#" class="link icon-only" data-panel="">
+										<i class="f7-icons">more_vertical</i>
+								</a>
+								<!-- <i class="f7-icons">help</i> -->
 								</div>
 							</div>
 						</div>
@@ -77,6 +133,7 @@
 						<!-- EOf Floating Action Button -->
 						<!-- Scrollable page content-->
 						<div class="page-content">
+
 							
 							<div class="welcomeCard">
 
@@ -94,7 +151,7 @@
 											<ul></ul>
 										</div>
 									</div>
-									<div class="card-footer color-bluegray">
+									<div class="card-footer">
 										<span class="date"></span>
 										<a href="players.html"><span>MORE</span></a>
 									</div>
@@ -103,11 +160,13 @@
 							<!-- End of Card -->
 							<!-- End of Leader board -->
 
+							
+
 							<div class="content-block-title">Navigation?</div>
 							<div class="list-block  color-bluegray">
 								<ul>
 									<li>
-										<a href="auth.html" data-reload="true" data-ignore-cache="true" class="item-link sign-in auth">
+										<a href="#login-screen" class="item-link sign-in auth">
 											<div class="item-content">
 												<div class="item-media"><i class="f7-icons">login</i></div>
 												<div class="item-inner">
@@ -137,7 +196,7 @@
 										</a>
 									</li>
 									<li>
-										<a href="timeline.html" class="item-link">
+										<a href="timeline.html" class="item-link timelineLink">
 											<div class="item-content">
 												<div class="item-media"><i class="f7-icons">time_fill</i></div>
 												<div class="item-inner">
@@ -152,6 +211,26 @@
 						<!-- EOf page-content-Index-->
 					</div>
 					<!-- EOf page-Index -->
+				<div data-page="login-screen" class="page cached">
+					<div class="navbar">
+						<div class="navbar-inner">
+							<div class="left">
+								<a href="#index" class="link icon-only"> <i class="icon icon-back"></i></a>
+							</div>
+							<div class="center">Login</div>
+							<div class="right"><a href="#" data-panel="right" class="link open-panel icon-only"><i class="icon icon-bars"></i></a></div>
+						</div>
+					</div>
+					<div class="page-content">
+						<div class="content-block">
+							<p></p>
+						</div>
+						<div class="content-block">
+							<div class="external" id="firebaseui-auth-container"></div>
+						</div>
+					</div>
+				</div>					
+
 
 				</div>
 				<!-- EOf Pages -->
@@ -164,10 +243,10 @@
 		<script type="text/javascript" src="js/framework7.min.js"></script>
 		<!-- Path to your app js-->
 		<script type="text/javascript" src="js/my-app.js"></script>
-		<script src="js/framework7.3dpanels.js"></script>
-		<script id="__bs_script__">//<![CDATA[
+		<!-- <script src="js/framework7.3dpanels.js"></script> -->
+<!-- 		<script id="__bs_script__">//<![CDATA[
     document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.8'><\/script>".replace("HOST", location.hostname));
-//]]></script>
+//]]></script> -->
 	</body>
 
 </html>
