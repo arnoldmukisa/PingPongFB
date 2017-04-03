@@ -27,7 +27,7 @@
         </div>
     </div>
     <!-- EOf AddGame toolbar -->
-    <form class="searchbar searchbar-init" data-search-list=".list-block-search" data-search-in=".item-title" data-found=".searchbar-found" data-not-found=".searchbar-not-found">
+    <form class="searchbar">
         <div class="searchbar-input">
             <input type="search" placeholder="Search">
             <a href="#" class="searchbar-clear"></a>
@@ -38,15 +38,17 @@
     <div class="searchbar-overlay"></div>
 
     <!-- Scrollable page content-->
-    <div class="page-content player-list">
+    <div class="page-content">
         <div class="content-block searchbar-not-found">
             Nothing found
         </div>
 
-        <div class="list-block media-list">
-            <ul></ul>
-            <div class="list-block-label">
-            </div>
+        <div class="list-block list-block-search searchbar-found media-list player-list  ">
+            <ul>
+                
+            </ul>
+            <!-- <div class="list-block-label">
+            </div> -->
         </div>
 
     </div>

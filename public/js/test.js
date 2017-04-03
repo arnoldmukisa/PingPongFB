@@ -1,73 +1,51 @@
-				// Initialize Firebase
-		var config = {
-			apiKey: "AIzaSyB5LRHsMRabuBJIuu2lZ78rLm90oMVQ_3E",
-			authDomain: "cmupingpong.firebaseapp.com",
-			databaseURL: "https://cmupingpong.firebaseio.com",
-			storageBucket: "cmupingpong.appspot.com",
-			messagingSenderId: "351881220973"
-		};
-		firebase.initializeApp(config);
-
-			
-			// FirebaseUI config.
-			var uiConfig = {
-				
-				signInSuccessUrl: 'index.html',
-				signInOptions: [
-					// Leave the lines as is for the providers you want to offer your users.
-					firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-					firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-					firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-					firebase.auth.GithubAuthProvider.PROVIDER_ID,
-					firebase.auth.EmailAuthProvider.PROVIDER_ID
-				],
-				// Terms of service url.
-				tosUrl: '<your-tos-url>'
-			};
-
-			// Initialize the FirebaseUI Widget using Firebase.
-			var ui = new firebaseui.auth.AuthUI(firebase.auth());
-			// The start method will wait until the DOM is loaded.
-			ui.start('#firebaseui-auth-container', uiConfig);
-
-				initApp = function() {
-				firebase.auth().onAuthStateChanged(function(user) {
-					if (user) {
-						// User is signed in.
-						var displayName = user.displayName;
-						var email = user.email;
-						var emailVerified = user.emailVerified;
-						var photoURL = user.photoURL;
-						var uid = user.uid;
-						var providerData = user.providerData;
-						user.getToken().then(function(accessToken) {
-							document.getElementById('sign-in-status').textContent = 'Signed in';
-							document.getElementById('sign-in').textContent = 'Sign out';
-							document.getElementById('account-details').textContent = JSON.stringify({
-								displayName: displayName,
-								email: email,
-								emailVerified: emailVerified,
-								photoURL: photoURL,
-								uid: uid,
-								accessToken: accessToken,
-								providerData: providerData
-							}, null, '  ');
-						});
-						alert(displayName);
-						// $('.score').html(displayName);
-					} 
-
-					else {
-						// User is signed out.
-						document.getElementById('sign-in-status').textContent = 'Signed out';
-						document.getElementById('sign-in').textContent = 'Sign in';
-						document.getElementById('account-details').textContent = 'null';
-					}
-				}, function(error) {
-					console.log(error);
-				});
-			};
-
-			window.addEventListener('load', function() {
-				initApp()
-			});
+// <div class="timeline-item">
+//                         <div class="timeline-item-date">24 <small>JAN</small></div>
+//                         <div class="timeline-item-divider"></div>
+//                         <div class="timeline-item-content">
+//                             <div class="timeline-item-inner">
+//                                 <div class="timeline-item-time">12:33</div>
+//                                 <div class="timeline-item-subtitle">Player 1 |Score</div>
+//                                 <div class="timeline-item-text">vs</div>
+//                                 <div class="timeline-item-subtitle">Player 2 |Score</div>
+//                             </div>
+//                             <div class="timeline-item-inner">
+//                                 <div class="timeline-item-time">12:33</div>
+//                                 <div class="timeline-item-subtitle">Player 1 |Score</div>
+//                                 <div class="timeline-item-text">vs</div>
+//                                 <div class="timeline-item-subtitle">Player 8 |Score</div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                     <!-- Timeline item with multiple events (inners) per day -->
+//                     <div class="timeline-item">
+//                         <div class="timeline-item-date">26 <small>JAN</small></div>
+//                         <div class="timeline-item-divider"></div>
+//                         <div class="timeline-item-content">
+//                             <div class="timeline-item-inner">
+//                                 <div class="timeline-item-time">12:33</div>
+//                                 ...
+//                             </div>
+//                             <div class="timeline-item-inner">
+//                                 <div class="timeline-item-time">15:45</div>
+//                                 ...
+//                             </div>
+//                         </div>
+//                     </div>
+//                     <div class="timeline-item">
+//                         <div class="timeline-item-date">24 <small>JAN</small></div>
+//                         <div class="timeline-item-divider"></div>
+//                         <div class="timeline-item-content">
+//                             <div class="timeline-item-inner">
+//                                 <div class="timeline-item-time">12:33</div>
+//                                 <div class="timeline-item-subtitle">Player 1 |Score</div>
+//                                 <div class="timeline-item-text">vs</div>
+//                                 <div class="timeline-item-subtitle">Player 2 |Score</div>
+//                             </div>
+//                             <div class="timeline-item-inner">
+//                                 <div class="timeline-item-time">12:33</div>
+//                                 <div class="timeline-item-subtitle">Player 1 |Score</div>
+//                                 <div class="timeline-item-text">vs</div>
+//                                 <div class="timeline-item-subtitle">Player 8 |Score</div>
+//                             </div>
+//                         </div>
+//                     </div>
