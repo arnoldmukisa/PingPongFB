@@ -2,13 +2,12 @@
 var myApp = new Framework7({
 	material: true,
 	modalTitle: 'Table Tenis',
-
 });
 // Export selectors engine
 var $$ = Dom7;
 // Add view
 var mainView = myApp.addView('.view-main', {
-	domCache: true //enable inline pages
+	// domCache: true //enable inline pages
 
 });
 // Initialize Firebase
@@ -22,120 +21,98 @@ var config = {
 
 firebase.initializeApp(config);
 
-
 var database = firebase.database();
 var player_ref = database.ref('PlayerProfile/');
 var user = firebase.auth().currentUser;
 
-// var name, email, photoUrl, uid, emailVerified;
-
 
 window.addEventListener('load', function() {
 
-	playerContentIndex(3, 'rating');
-	authState('load');
-	// gamesTimeline();
+playerContentIndex(3, 'rating');
+authState('load');
 
 });
 
 
 $$(document).on('page:init', function(e) {
 
-	var page = e.detail.page;
-	// Player Page
-	if (page.name === 'index') {
-		playerContentIndex(3, 'rating');
-		authState(page.name);
+var user = firebase.auth().currentUser;
+var name, email, photoUrl, uid, emailVerified;
+var page = e.detail.page;
+// Player Page
+if (page.name === 'index') {
+	playerContentIndex(3, 'rating');
+	authState(page.name);
 
+}
+if (page.name === 'players') {
 
-	}
-	if (page.name === 'players') {
+playerContent('rating');
 
-		playerContent('rating');
+var mySearchbar = myApp.searchbar('.searchbar', {
+  	searchList: '.list-block-search',
+  	searchIn: '.item-title'
+	});
+}
+if (page.name === 'login-screen') {
 
-		var mySearchbar = myApp.searchbar('.searchbar', {
-    	searchList: '.list-block-search',
-    	searchIn: '.item-title'
-		}); 
-	}
-	if (page.name === 'login-screen') {
+	var uiConfig = {
 
-		var uiConfig = {
+			credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+			signInSuccessUrl: 'index.html',
+			signInOptions: [
+				firebase.auth.EmailAuthProvider.PROVIDER_ID,
+				firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+				firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+				firebase.auth.TwitterAuthProvider.PROVIDER_ID
+			],
+			// signInFlow:'popup',
+			// Terms of service url.
+			tosUrl: 'services.html'
+			};
 
-		credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-		signInSuccessUrl: 'index.html',
-		signInOptions: [
-			firebase.auth.EmailAuthProvider.PROVIDER_ID,
-			firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-			firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-			firebase.auth.TwitterAuthProvider.PROVIDER_ID
-		],
-		// signInFlow:'popup',
-		// Terms of service url.
-		tosUrl: 'services.html'
-		};
 	// Initialize the FirebaseUI Widget using Firebase.
 		var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
-		// The start method will wait until the DOM is loaded.
-		ui.start('#firebaseui-auth-container', uiConfig);
-	}
-	if (page.name === 'add-game') {
+	// The start method will wait until the DOM is loaded.
+ui.start('#firebaseui-auth-container', uiConfig);
 
-		var user = firebase.auth().currentUser;
-		var name, email, photoUrl, uid, emailVerified;
-		mainView.router.reloadPage('add-game.html');
+}
+if (page.name === 'add-game') {
 
-		if (user != null) {
+mainView.router.reloadPage('add-game.html');
 
-		loadAddGame();
-		name = user.displayName;
-
-		$$('.welcomeName').html('Hi' + ' ' + name);
-
-			if (!myApp.device.ios) {
-				$$(page.container).find('input, textarea').on('focus', function(event) {
-					var container = $$(event.target).closest('.page-content');
-					var elementOffset = $$(event.target).offset().top;
-					var pageOffset = container.scrollTop();
-					var newPageOffset = pageOffset + elementOffset - 81;
-					setTimeout(function() {
-						container.scrollTop(newPageOffset, 300);
-					}, 700);
-				});
-			}
-		}
-		else{
-			$$('.welcomeName').html('No account');
-
-
-			loginRedirect();
-		}
-	}
-	if (page.name === 'timeline') {
-		var user = firebase.auth().currentUser;
-		name = user.displayName;
-
-		gamesTimeline(name);
-		
+	if (user != null) {
+	name = user.displayName;
+	loadAddGame();
+	$$('.welcomeName').html('Hi' + ' ' + name);
+	keyboardScrollFix(page);//fix toolbar floating over keyboard
 
 	}
+	else{
+
+	$$('.welcomeName').html('No account');
+	loginRedirect();
+
+	}
+}
+if (page.name === 'timeline') {
+name	=	user.displayName;
+gamesTimeline(name);
+
+}
 
 });
-
 
 var loginLink = $$('div').filter(function(index, el) {
-	return $$(this).hasClass('loginLink');
-});
+	return $$(this).hasClass('loginLink');	});
 
 
 var logoutLink = $$('a').filter(function(index, el) {
-	return $$(this).hasClass('log-out');
-});
+	return $$(this).hasClass('log-out');	});
 
 
 logoutLink.on('click', function(e) {
-
 	firebase.auth().signOut();
 	myApp.closePanel();
 	mainView.router.loadPage('index.html');
@@ -146,8 +123,12 @@ logoutLink.on('click', function(e) {
 
 
 // =================Add Game Page=====================
-// myApp.onPageInit('add-game', function(page) {
 function loadAddGame() {
+
+//initialize fuction scope variables
+var winner_score, winner_uid, winner_name, winner_rating;
+var loser_score, loser_uid, loser_name, loser_rating, totalPoints;
+var user = firebase.auth().currentUser;
 
 // Populating Opponents Name Field
 var autocompleteDropdownAll = myApp.autocomplete({
@@ -185,7 +166,6 @@ function validateScores(opponent_score,user_score,opponent_name) {
 	//Getting data from Form
 $$('.form-to-data').on('click', function() {
 
-var user = firebase.auth().currentUser;
 	//Current User Data
 	var UserformData = myApp.formToData('#UserScoreForm'); // formData is an Object
 	var user_uid = user.uid;
@@ -208,9 +188,6 @@ var user = firebase.auth().currentUser;
 		pushGame();
 	}); //End of player_ref opponent_uid
 
-
-var winner_score, winner_uid, winner_name, winner_rating;
-var loser_score, loser_uid, loser_name, loser_rating, totalPoints;
 
 function findWinner() {
 
@@ -247,45 +224,12 @@ function pushGame() {
 
 	calculateRating();
 
-	var Games = database.ref('Games/');
-	var Game = Games.child('Game');
-	var Stats = Games.child('Stats');
-	var time_stamp =firebase.database.ServerValue.TIMESTAMP;
-
-	Game.push({
-		// date: firebase.database.ServerValue.TIMESTAMP,
-		added_by:user_uid,
-		user_score:user_score,
-		user_name:user_name,
-		opponent_uid:opponent_uid,
-		opponent_name:opponent_name,
-		opponent_score:opponent_score,
-		totalPoints:'?',
-		status:'pending',
-		date:time_stamp	
-	})
-	// var gameKey=game.key();
-
-	Stats.push({
-			// gameKey:game,
-			date:time_stamp,	
-			// new_rating: new_winner_rating,
-			winner_score: winner_score,
-			winner_uid: winner_uid,
-			winner_name: winner_name,
-			loser_score: loser_score,
-			loser_uid: loser_uid,
-			loser_name: loser_name
-		
-	});
-
-
 	updateMatches(user_uid);
 	updateMatches(opponent_uid);
 
 	alert("Game Added!");
-	mainView.router.reloadPage('add-game.html');
 	mainView.router.loadPage('timeline.html');
+	// mainView.router.reloadPage('add-game.html');
 
 } //End of push Game function
 
@@ -358,11 +302,41 @@ function calculateRating() {
 			myApp.alert('Something is wrong')
 		}
 
+		var Games = database.ref('Games/');
+		var Game = Games.child('Game');
+		var Stats = Games.child('Stats');
+		var time_stamp =firebase.database.ServerValue.TIMESTAMP;
+
+		Game.push({
+			// date: firebase.database.ServerValue.TIMESTAMP,
+			added_by:user_uid,
+			user_score:user_score,
+			user_name:user_name,
+			opponent_uid:opponent_uid,
+			opponent_name:opponent_name,
+			opponent_score:opponent_score,
+			status:'pending',
+			date:time_stamp
+		})
+
+		Stats.push({
+
+				date:time_stamp,
+				winner_score: winner_score,
+				winner_uid: winner_uid,
+				winner_name: winner_name,
+				new_winner_rating: new_winner_rating,
+				loser_score: loser_score,
+				loser_uid: loser_uid,
+				loser_name: loser_name
+
+		});
+
 		var updates = {};
 
 		updates['PlayerProfile/' + winner_uid + '/rating'] = Math.round10(new_winner_rating,-2);
 		updates['PlayerProfile/' + loser_uid + '/rating'] = Math.round10(new_loser_rating,-2);
-		
+
 		return database.ref().update(updates);
 
 	});
@@ -383,12 +357,9 @@ matches_ref = database.ref('/PlayerProfile/' + uid).once('value').then(function(
 	});
 }
 
-});// End of on-form-click
+});//==========End of on-form-click====// ==========End of Add Score============
 
-// ==========End of Add Score================
-
-}
-// ========================End of Add Page Init===========================
+}// ========================End of Add Page Init================================
 
 // Generate dynamic page
 var dynamicPageIndex = 0;
@@ -425,7 +396,7 @@ authState = function(page) {
 
 	if (user) {
 		// User is signed in.
-		displayWelcomeBar('show');
+		displayWelcomeBar('show');//Displays Rating and User Name
 
 		var displayName = user.displayName;
 		var email = user.email;
@@ -433,35 +404,20 @@ authState = function(page) {
 		var photoURL = user.photoURL;
 		var uid = user.uid;
 		var providerData = user.providerData;
-		user.getToken().then(function(accessToken) {
 
-			document.getElementById('sign-in-status').textContent = 'Signed in';
-			// document.getElementById('log-out').textContent = 'log out';
-			var loginLink	= $$('a').filter(function(index, el) {
-				return $$(this).hasClass('auth'); 
-			})
-			loginLink.remove();
-			displayRatingHome(uid,page);
+			user.getToken().then(function(accessToken) {
+				document.getElementById('sign-in-status').textContent = 'Signed in';
+				removeLink('a','auth');//removes logout links after sign in
+				displayRatingHome(uid,page);
+			});
 
-		});
-		//Create Profile Table if does not exists
-		createNewProfile(uid);
+		createNewProfile(uid);//Create Profile Table if does not exists
+		}
+		else {// User is signed out.
 
-	} else {
-		// User is signed out.
 		document.getElementById('sign-in-status').textContent = 'Signed out';
-		var loginLink = $$('div').filter(function(index, el) {
-		return $$(this).hasClass('loginLink');
-		})
-
-		loginLink.html('Sign in');
-
-		var timelineLink = $$('a').filter(function(index, el) {
-			return $$(this).hasClass('timelineLink');
-			})
-		timelineLink.remove();
-
-		logoutLink.remove();
+		addLink('div','loginLink','Sign in');//adds sign-in links after sign out
+		removeLink('a','timelineLink')//removes time-line links link after sign out
 
 		}
 	},
@@ -474,9 +430,7 @@ authState = function(page) {
 
 // ============================================Generate Player List=============================
 playerContent = function(sort) {
-
 // var player_ref = database.ref('PlayerProfile/');
-
 player_ref.orderByChild(sort).on("value", function(snapshot) {
 	snapshot.forEach(function(player_snap) {
 		var ratings = player_snap.child("rating").val();
@@ -511,10 +465,8 @@ player_ref.orderByChild(sort).on("value", function(snapshot) {
 
 function playerContentIndex(list_no, sort) {
 
-// list_no = 100;
 var player_ref = database.ref('PlayerProfile/');
-
-player_ref.orderByChild(sort).limitToLast(list_no).on("value", function(snapshot) {
+player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapshot) {
 	snapshot.forEach(function(player_snap) {
 		var ratings = player_snap.child("rating").val();
 		var players = player_snap.child("displayName").val();
@@ -547,10 +499,10 @@ player_ref.orderByChild(sort).limitToLast(list_no).on("value", function(snapshot
 function displayWelcomeBar(status) {
 
 var welcomeHTML=	'<div class="center card-header bg-green color-white">'+
-					'<div class="left"></div>'+
-					'<div class="center card-content ratingHome " style="font-size: 21px; font-weight: 100;"></div>'+
-					'<div class="right"></div>'+
-					'</div>';
+									'<div class="left"></div>'+
+									'<div class="center card-content ratingHome " style="font-size: 21px; font-weight: 100;"></div>'+
+									'<div class="right"></div>'+
+									'</div>';
 
 	// Prepend new list element
 	if (status=='show') {
@@ -589,9 +541,9 @@ var player_ref_uid = database.ref('PlayerProfile/'+uid);
 	})
 	ratingHome.html('|'+matches+'|'+' '+rating);
 });
-if (page =='timeline') {
-
-}
+// if (page =='timeline') {
+//
+// }
 
 }
 
@@ -656,11 +608,11 @@ player_ref.orderByChild("displayName").equalTo(name).on("child_added", function(
 
 	getGameData(user_uid);
 
-}); 
+});
 
 
 function getGameData(user_uid) {
-				
+
 var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('added_by').equalTo(user_uid);
 
 	myGamesRef.on('value', function(snapshot) {
@@ -677,7 +629,7 @@ var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('added_by')
 		var d = new Date(time_stamp).toUTCString().slice(0, -4);
 
 		displayGameData(d,user_name,user_score,opponent_name,opponent_score);
-		
+
 		});
 	});
 }
@@ -707,7 +659,7 @@ var timelineItem =	'<div class="timeline-item">'+
                     '<div class="chip-media bg-bluegray">'+opponent_score+'</div>'+
                     '<div class="chip-label">'+opponent_name+'</div>'+
                     '</div>'+
-				   
+
 				    '</div>'+
 					'</div>'+
 					'</div>'+
@@ -766,3 +718,39 @@ var timelineItem =	'<div class="timeline-item">'+
     };
   }
 })();
+function keyboardScrollFix() {
+	if (!myApp.device.ios) {
+		$$(page.container).find('input, textarea').on('focus', function(event) {
+			var container = $$(event.target).closest('.page-content');
+			var elementOffset = $$(event.target).offset().top;
+			var pageOffset = container.scrollTop();
+			var newPageOffset = pageOffset + elementOffset - 81;
+			setTimeout(function() {
+				container.scrollTop(newPageOffset, 300);
+			}, 700);
+		});
+	}
+
+}
+
+function addLink(element,hasClass,action) {
+
+	var link	= $$(element).filter(function(index, el) {
+		return $$(this).hasClass(hasClass);
+	});
+	if (action=='Sign in') {
+
+		link.html('Sign in');
+	}
+	else {
+			myApp.alert('No valid action was submitted for login elements')
+	}
+
+}
+function removeLink(element,hasclass) {
+
+	var link = $$(element).filter(function(index, el) {
+	return $$(this).hasClass(hasclass);
+	});
+	link.remove();
+}
