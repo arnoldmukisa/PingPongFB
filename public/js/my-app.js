@@ -21,6 +21,24 @@ var config = {
 
 firebase.initializeApp(config);
 
+var uiConfig = {
+
+		credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+		signInSuccessUrl: 'index.html',
+		signInOptions: [
+			firebase.auth.EmailAuthProvider.PROVIDER_ID,
+			firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+			firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+			firebase.auth.TwitterAuthProvider.PROVIDER_ID
+		],
+		// Terms of service url.
+		tosUrl: 'services.html'
+		};
+
+		// ui.reset();
+	// Initialize the FirebaseUI Widget using Firebase.
+var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
 var database = firebase.database();
 var player_ref = database.ref('PlayerProfile/');
 var user = firebase.auth().currentUser;
@@ -53,29 +71,19 @@ var mySearchbar = myApp.searchbar('.searchbar', {
   	searchList: '.list-block-search',
   	searchIn: '.item-title'
 	});
+
+// $$('.player-link').on('click', function(e) {
+
+// 	mainView.router.loadPage('add-game.html');
+// 	console.log('player cliced');
+// 	});
+
 }
+
 if (page.name === 'login-screen') {
 
-	var uiConfig = {
-
-			credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-			signInSuccessUrl: 'index.html',
-			signInOptions: [
-				firebase.auth.EmailAuthProvider.PROVIDER_ID,
-				firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-				firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-				firebase.auth.TwitterAuthProvider.PROVIDER_ID
-			],
-			// signInFlow:'popup',
-			// Terms of service url.
-			tosUrl: 'services.html'
-			};
-
-	// Initialize the FirebaseUI Widget using Firebase.
-		var ui = new firebaseui.auth.AuthUI(firebase.auth());
-
 	// The start method will wait until the DOM is loaded.
-ui.start('#firebaseui-auth-container', uiConfig);
+		ui.start('#firebaseui-auth-container', uiConfig);
 
 }
 if (page.name === 'add-game') {
@@ -97,12 +105,23 @@ mainView.router.reloadPage('add-game.html');
 	}
 }
 if (page.name === 'timeline') {
-name	=	user.displayName;
+
+player = page.query.name;
+console.log(player);
+	if (player!=null) {
+		name = player;
+	}
+	else if(player==null && user!=null){
+	name	=	user.displayName;
+	}else{
+		
+	}
 gamesTimeline(name);
 
 }
 
 });
+
 
 var loginLink = $$('div').filter(function(index, el) {
 	return $$(this).hasClass('loginLink');	});
@@ -446,7 +465,8 @@ player_ref.orderByChild(sort).on("value", function(snapshot) {
 
 		var match = matches;
 		// List item html
-		var itemHTML = 	'<li class="item-content">' +
+		var itemHTML = 	'<a href="timeline.html?name='+player+'" class="item-link">'+
+						'<li class="item-content">' +
 						'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
 						'<div class="item-inner">' +
 						'<div class="item-title-row">' +
@@ -454,13 +474,15 @@ player_ref.orderByChild(sort).on("value", function(snapshot) {
 						'</div>' +
 						'<div class="item-subtitle">' + '|' + match + '|' + '	' + rating + '</div>' +
 						'</div>' +
-						'</li>';
+						'</li>'+
+						'</a>';
 		// Prepend new list element
 		$$('.player-list').find('ul').prepend(itemHTML);
 		// When loading done, we need to reset it
 
 	});
 });
+
 };
 
 function playerContentIndex(list_no, sort) {
@@ -481,7 +503,7 @@ player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapsh
 
 		var match = matches;
 		// List item html
-		var itemHTML = '<li class="item-content">' +
+		var itemHTML = '<li class="item-content player-link">' +
 						'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
 						'<div class="item-inner">' +
 						'<div class="item-title-row">' +
@@ -494,6 +516,10 @@ player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapsh
 		$$('.player-list-index').find('ul').prepend(itemHTML);
 	});
 });
+$$('.player-link').on('click', function() {
+
+	console.log('player cliced');
+	});
 };
 
 function displayWelcomeBar(status) {
@@ -583,7 +609,7 @@ function loginRedirect() {
       {
         text: 'Login',
         onClick: function() {
-          mainView.router.loadPage('#login-screen');
+          mainView.router.loadPage('login-screen.html');
         }
       },
       {
@@ -600,6 +626,7 @@ function loginRedirect() {
 
 function gamesTimeline(name) {
 
+// var name= string(player);
 var player_ref = database.ref('PlayerProfile/');
 
 player_ref.orderByChild("displayName").equalTo(name).on("child_added", function(snapshot) {
