@@ -459,16 +459,16 @@ player_ref.orderByChild(sort).on("value", function(snapshot) {
 		var match = matches;
 		// List item html
 		var itemHTML = 	'<a href="timeline.html?name='+player+'" class="item-link">'+
-						'<li class="item-content">' +
-						'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
-						'<div class="item-inner">' +
-						'<div class="item-title-row">' +
-						'<div class="item-title">' + player + '</div>' +
-						'</div>' +
-						'<div class="item-subtitle">' + '|' + match + '|' + '	' + rating + '</div>' +
-						'</div>' +
-						'</li>'+
-						'</a>';
+										'<li class="item-content">' +
+										'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
+										'<div class="item-inner">' +
+										'<div class="item-title-row">' +
+										'<div class="item-title">' + player + '</div>' +
+										'</div>' +
+										'<div class="item-subtitle">' + '|' + match + '|' + '	' + rating + '</div>' +
+										'</div>' +
+										'</li>'+
+										'</a>';
 		// Prepend new list element
 		$$('.player-list').find('ul').prepend(itemHTML);
 		// When loading done, we need to reset it
@@ -546,17 +546,9 @@ var player_ref_uid = database.ref('PlayerProfile/'+uid);
 	var	matches = snapshot.val().matches;
 	var displayName=snapshot.val().displayName;
 
-	var name = $$('div').filter(function(index, el) {
-		return $$(this).hasClass('navTitle');
-	})
-	name.html(displayName);
-	// $$('navTitle').html(displayName);
-	// console.log(displayName);
+		$$('navTitle').html(displayName);
+		$$('.ratingHome').html('|'+matches+'|'+' '+rating);
 
-	var ratingHome = $$('div').filter(function(index, el) {
-		return $$(this).hasClass('ratingHome');
-	})
-	ratingHome.html('|'+matches+'|'+' '+rating);
 });
 // if (page =='timeline') {
 //
@@ -623,6 +615,9 @@ var player_ref = database.ref('PlayerProfile/');
 player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
 
 	user_uid = snapshot.key;
+	matches= snapshot.val().matches;
+	console.log(matches);
+	$$('.matches').html(matches);
 
 	getGameData(user_uid);
 
@@ -631,42 +626,43 @@ player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_ad
 
 function getGameData(user_uid) {
 
-var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('added_by').equalTo(user_uid);
+var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('date');
 
 	myGamesRef.on('value', function(snapshot) {
 		snapshot.forEach(function(childSnapshot) {
-		var childKey = childSnapshot.key;
-		var childData = childSnapshot.val();
+		// var childKey = childSnapshot.key;
+		// var childData = childSnapshot.val();
 		var user_score = childSnapshot.val().user_score;
 		var user_name =	childSnapshot.val().user_name;
-		var user_uid = childSnapshot.val().added_by;
+		var added_by = childSnapshot.val().added_by;
 		var opponent_score = childSnapshot.val().opponent_score;
 		var opponent_uid = childSnapshot.val().opponent_uid;
 		var opponent_name = childSnapshot.val().opponent_name;
 		var time_stamp = childSnapshot.val().date;
-		var d = new Date(time_stamp).toUTCString().slice(0, -4);
+		var date = new Date(time_stamp).toUTCString().slice(0, -4);
 
-		displayGameData(d,user_name,user_score,opponent_name,opponent_score);
-
+				if(added_by==user_uid||opponent_uid==user_uid){
+				displayGameData(date,user_name,user_score,opponent_name,opponent_score);
+				}
 		});
 	});
 }
 
 }//End of gamesTimeline
 
-function displayGameData(d,user_name,user_score,opponent_name,opponent_score) {
+function displayGameData(date,user_name,user_score,opponent_name,opponent_score) {
 
 var timelineItem =	'<div class="timeline-item">'+
 										'<div class="timeline-item-date">'+ '<small>'+'</small></div>'+
 										'<div class="timeline-item-divider"></div>'+
 										'<div class="timeline-item-content">'+
 										'<div class="timeline-item-inner">'+
-									    '<div class="timeline-item-time">'+d+'</div>'+
+									    '<div class="timeline-item-time">'+date+'</div>'+
 									    '<div class="timeline-item-subtitle">'+
 									    '<div class="chip">'+
-					                    '<div class="chip-media bg-red">'+user_score+'</div>'+
-					                    '<div class="chip-label">'+user_name+'</div>'+
-					                    '</div>'+
+	                    '<div class="chip-media bg-red">'+user_score+'</div>'+
+	                    '<div class="chip-label">'+user_name+'</div>'+
+	                    '</div>'+
 									    '<div class="timeline-item-subtitle">'+
 									    '<div class="chip">'+
 					                    '<div class="chip-media bg-bluegray">'+opponent_score+'</div>'+

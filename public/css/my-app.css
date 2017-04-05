@@ -4,6 +4,9 @@
   background-size: cover;
   background-position: center;
 }
+.popover {
+      width: 200px;
+    }
 /*.ratingHome {
   font-size: 36px;
 
