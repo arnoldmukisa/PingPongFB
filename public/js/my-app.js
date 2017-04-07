@@ -82,9 +82,8 @@ if (page.name === 'login-screen') {
 }
 if (page.name === 'add-game') {
 
-// mainView.router.reloadPage('add-game.html');
-
 	if (user != null) {
+
 	name = user.displayName;
 	loadAddGame();
 	$$('.welcomeName').html('Hi' + ' ' + name);
@@ -106,10 +105,16 @@ if (page.name === 'timeline') {
 	}
 	else if(player==null && user!=null){
 	name	=	user.displayName;
-	}else{
+	}
+	else{
 		loginRedirect();
 	}
-gamesTimeline(name);
+
+	if (name!=null) {
+		gamesTimeline(name);}
+	else{
+		console.log(name+'No name')
+	}
 
 }
 
@@ -135,7 +140,7 @@ logoutLink.on('click', function(e) {
 
 
 // =================Add Game Page=====================
-function loadAddGame() {
+loadAddGame = function() {
 
 //initialize fuction scope variables
 var winner_score, winner_uid, winner_name, winner_rating;
@@ -167,7 +172,7 @@ var autocompleteDropdownAll = myApp.autocomplete({
 });
 	// End of Opponents Name field
 
-function validateScores(opponent_score,user_score,opponent_name) {
+validateScores = function(opponent_score,user_score,opponent_name) {
 
 	if (!opponent_score || !user_score || !opponent_name) {
 	myApp.alert('field is empty...');
@@ -201,7 +206,7 @@ $$('.form-to-data').on('click', function() {
 	}); //End of player_ref opponent_uid
 
 
-function findWinner() {
+findWinner = function() {
 
 	console.log('12 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 	if (user_score > opponent_score) {
@@ -230,22 +235,19 @@ function findWinner() {
 	}
 }
 
-function pushGame() {
+pushGame = function() {
 
 	findWinner();
-
 	calculateRating();
-
 	updateMatches(user_uid);
 	updateMatches(opponent_uid);
 
 	alert("Game Added!");
 	mainView.router.loadPage('timeline.html');
-	// mainView.router.reloadPage('add-game.html');
 
 } //End of push Game function
 
-function calculateRating() {
+calculateRating = function() {
 
 	//Evaluate winner rating and loser rating
 	database.ref('/PlayerProfile/' + user_uid).once('value').then(function(snapshot) {
@@ -355,7 +357,7 @@ function calculateRating() {
 }
 
 
-function updateMatches(uid) {
+updateMatches = function(uid) {
 
 matches_ref = database.ref('/PlayerProfile/' + uid).once('value').then(function(snapshot) {
 	var current_matches = snapshot.val().matches;
@@ -373,36 +375,6 @@ matches_ref = database.ref('/PlayerProfile/' + uid).once('value').then(function(
 
 }// ========================End of Add Page Init================================
 
-// Generate dynamic page
-var dynamicPageIndex = 0;
-
-function createContentPage() {
-	mainView.router.loadContent(
-		'<!-- Top Navbar-->' +
-		'<div class="navbar">' +
-		'  <div class="navbar-inner">' +
-		'    <div class="left"><a href="#" class="back link"><i class="icon icon-back"></i><span>Back</span></a></div>' +
-		'    <div class="center sliding">Dynamic Page ' + (++dynamicPageIndex) + '</div>' +
-		'  </div>' +
-		'</div>' +
-		'<div class="pages">' +
-		'  <!-- Page, data-page contains page name-->' +
-		'  <div data-page="dynamic-pages" class="page">' +
-		'    <!-- Scrollable page content-->' +
-		'    <div class="page-content">' +
-		'      <div class="content-block">' +
-		'        <div class="content-block-inner">' +
-		'          <p>Here is a dynamic page created on ' + new Date() + ' !</p>' +
-		'          <p>Go <a href="#" class="back">back</a> or go to <a href="services.html">Services</a>.</p>' +
-		'        </div>' +
-		'      </div>' +
-		'    </div>' +
-		'  </div>' +
-		'</div>'
-	);
-	return;
-}
-// ===============================FUNCTIONS================================================//
 authState = function(page) {
 	firebase.auth().onAuthStateChanged(function(user) {
 
@@ -437,8 +409,6 @@ authState = function(page) {
 		console.log(error);
 	});
 };
-//==============================End of authState Function=================================
-
 
 // ============================================Generate Player List=============================
 playerContent = function(sort) {
@@ -478,7 +448,7 @@ player_ref.orderByChild(sort).on("value", function(snapshot) {
 
 };
 
-function playerContentIndex(list_no, sort) {
+playerContentIndex = function(list_no, sort) {
 
 var player_ref = database.ref('PlayerProfile/');
 player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapshot) {
@@ -496,36 +466,36 @@ player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapsh
 
 		var match = matches;
 		// List item html
-		var itemHTML ='<a href="timeline.html?name='+player+'" class="item-link">'+
-									'<li class="item-content player-link">' +
-									'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
-									'<div class="item-inner">' +
-									'<div class="item-title-row">' +
-									'<div class="item-title">' + player + '</div>' +
-									'</div>' +
-									'<div class="item-subtitle">' + '|' + match + '|' + '	' + rating + '</div>' +
-									'</div>' +
-									'</li>'+
-									'</a>';
+		var itemHTML =	'<a href="timeline.html?name='+player+'" class="item-link">'+
+						'<li class="item-content player-link">' +
+						'<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
+						'<div class="item-inner">' +
+						'<div class="item-title-row">' +
+						'<div class="item-title">' + player + '</div>' +
+						'</div>' +
+						'<div class="item-subtitle">' + '|' + match + '|' + '	' + rating + '</div>' +
+						'</div>' +
+						'</li>'+
+						'</a>';
 		// Prepend new list element
 		$$('.player-list-index').find('ul').prepend(itemHTML);
 	});
 });
 };
 
-function displayWelcomeBar(status) {
+displayWelcomeBar = function(status) {
 
 var welcomeHTML=	'<div class="center card-header bg-green color-white">'+
-									'<div class="left"></div>'+
-									'<div class="center card-content ratingHome " style="font-size: 21px; font-weight: 100;"></div>'+
-									'<div class="right"></div>'+
-									'</div>';
+					'<div class="left"></div>'+
+					'<div class="center card-content ratingHome " style="font-size: 21px; font-weight: 100;"></div>'+
+					'<div class="right"></div>'+
+					'</div>';
 
 	// Prepend new list element
 	if (status=='show') {
 
 		$$('.welcomeCard').html(welcomeHTML);
-		$$('navTitle').html()
+		$$('.navTitle').html()
 
 	}
 
@@ -537,7 +507,7 @@ var welcomeHTML=	'<div class="center card-header bg-green color-white">'+
 
 }
 
-function displayRatingHome(uid,page) {
+displayRatingHome = function(uid,page) {
 
 var player_ref_uid = database.ref('PlayerProfile/'+uid);
 	player_ref_uid.on("value", function(snapshot) {
@@ -546,29 +516,22 @@ var player_ref_uid = database.ref('PlayerProfile/'+uid);
 	var	matches = snapshot.val().matches;
 	var displayName=snapshot.val().displayName;
 
-		$$('navTitle').html(displayName);
+		$$('.navTitle').html(displayName);
 		$$('.ratingHome').html('|'+matches+'|'+' '+rating);
 
 });
-// if (page =='timeline') {
-//
-// }
-
 }
 
-function createNewProfile(uid,displayName) {
-// var player_ref = database.ref('PlayerProfile/');
+createNewProfile = function(uid,displayName) {
+
 var player_ref = database.ref('PlayerProfile/');
 player_ref.once('value', function(snapshot) {
 
 	if (snapshot.hasChild(uid)) {
 
-		console.log('exists');
+		console.log('Profile Exists');
 
-	} // log.console('exists')
-	// else if (snapshot.hasChild(displayName)) {
-
-	// }
+	}
 	else {
 		var new_player_ref = database.ref('PlayerProfile/' + uid);
 		new_player_ref.set({
@@ -582,7 +545,7 @@ player_ref.once('value', function(snapshot) {
 
 }
 
-function loginRedirect() {
+loginRedirect = function() {
 
     myApp.modal({
     title:  'Your Not Logged In',
@@ -607,11 +570,9 @@ function loginRedirect() {
 }
 
 
-function gamesTimeline(name) {
+gamesTimeline = function(name) {
 
-// var name= string(player);
 var player_ref = database.ref('PlayerProfile/');
-
 player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
 
 	user_uid = snapshot.key;
@@ -624,7 +585,7 @@ player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_ad
 });
 
 
-function getGameData(user_uid) {
+getGameData = function(user_uid) {
 
 var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('date');
 
@@ -650,34 +611,34 @@ var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('date');
 
 }//End of gamesTimeline
 
-function displayGameData(date,user_name,user_score,opponent_name,opponent_score) {
+displayGameData = function(date,user_name,user_score,opponent_name,opponent_score) {
 
 var timelineItem =	'<div class="timeline-item">'+
-										'<div class="timeline-item-date">'+ '<small>'+'</small></div>'+
-										'<div class="timeline-item-divider"></div>'+
-										'<div class="timeline-item-content">'+
-										'<div class="timeline-item-inner">'+
-									    '<div class="timeline-item-time">'+date+'</div>'+
-									    '<div class="timeline-item-subtitle">'+
-									    '<div class="chip">'+
-	                    '<div class="chip-media bg-red">'+user_score+'</div>'+
-	                    '<div class="chip-label">'+user_name+'</div>'+
-	                    '</div>'+
-									    '<div class="timeline-item-subtitle">'+
-									    '<div class="chip">'+
-					                    '<div class="chip-media bg-bluegray">'+opponent_score+'</div>'+
-					                    '<div class="chip-label">'+opponent_name+'</div>'+
-					                    '</div>'+
-									    '</div>'+
-										'</div>'+
-										'</div>'+
-										'</div>'
+					'<div class="timeline-item-date">'+ '<small>'+'</small></div>'+
+					'<div class="timeline-item-divider"></div>'+
+					'<div class="timeline-item-content">'+
+					'<div class="timeline-item-inner">'+
+				    '<div class="timeline-item-time">'+date+'</div>'+
+				    '<div class="timeline-item-subtitle">'+
+				    '<div class="chip">'+
+                    '<div class="chip-media bg-red">'+user_score+'</div>'+
+                    '<div class="chip-label">'+user_name+'</div>'+
+                    '</div>'+
+				    '<div class="timeline-item-subtitle">'+
+				    '<div class="chip">'+
+                    '<div class="chip-media bg-bluegray">'+opponent_score+'</div>'+
+                    '<div class="chip-label">'+opponent_name+'</div>'+
+                    '</div>'+
+				    '</div>'+
+					'</div>'+
+					'</div>'+
+					'</div>'
 
 	$$('.timeline-loop').prepend(timelineItem);
 }
 
 
-function addLink(element,hasClass,action) {
+addLink = function(element,hasClass,action) {
 
 	var link	= $$(element).filter(function(index, el) {
 		return $$(this).hasClass(hasClass);
