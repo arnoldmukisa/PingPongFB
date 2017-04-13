@@ -101,7 +101,7 @@
 			<!-- Your main view, should have "view-main" class-->
 			<div class="view view-main">
 				<!-- Pages, -->
-				<div class="pages navbar-fixed">
+				<div class="pages navbar-fixed toolbar-fixed">
 					<!-- Page, data-page contains page name-->
 					<div data-page="index" class="page">
 						<!-- Top Navbar-->
@@ -114,7 +114,7 @@
 										<i class="icon icon-bars"></i>
 									</a>
 								</div>
-								<div class="navTitle center"></div>
+								<div class="navTitle center">Table Tennis</div>
 
 								<div class="right">
 									<a href="#" class="link icon-only open-popover" data-popover=".popover-links">
@@ -124,12 +124,20 @@
 							</div>
 						</div>
 						<!-- End of Top Nav Bar -->
-						<div class="toolbar">
+						<div class="toolbar tabbar tabbar-labels-fixed">
 							<div class="toolbar-inner">
-									<a href="index.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">home</i></a>
-									<a href="add-game.html" class="link"><i class="f7-icons">add_round</i></a>
-									<a href="players.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">persons</i></a>
-									<a href="timeline.html" class="link" data-reload="true" data-ignore-cache="true"><i class="f7-icons">time</i></a>
+									<a href="index.html" class="link active" data-reload="true" data-ignore-cache="true"><i class="icon f7-icons">home</i>
+									<!-- <span class="tabbar-label">Home</span> -->
+									</a>
+									<a href="add-game.html" class="link"><i class="icon f7-icons">add_round</i>
+									<!-- <span class="tabbar-label">Add Game</span> -->
+									</a>
+									<a href="players.html" class="link"><i class="icon f7-icons">persons</i>
+										<!-- <span class="tabbar-label">Players</span> -->
+									</a>
+									<a href="timeline.html" class="link" data-reload="true" data-ignore-cache="true"><i class="icon f7-icons">time</i>
+										<!-- <span class="tabbar-label">Timeline</span> -->
+									</a>
 							</div>
 						</div>
 						<!-- Floating Action Button -->
@@ -141,9 +149,9 @@
 						<div class="page-content hide-toolbar-on-scroll">
 
 
-							<div class="welcomeCard">
+							<!-- <div class="welcomeCard">
 
-							</div>
+							</div> -->
 							<div class="popover popover-links">
 								 <div class="popover-angle"></div>
 								 <div class="popover-inner">

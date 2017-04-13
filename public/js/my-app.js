@@ -484,7 +484,7 @@ function displayWelcomeBar(status) {
 
 			welcomeHTML ='';
 			$$('.welcomeCard').html(welcomeHTML);
-			$$('.navTitle').html('Table T')
+			$$('.navTitle').html('Table Tennis')
 		}
 
 	}
