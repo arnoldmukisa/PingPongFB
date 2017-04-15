@@ -570,7 +570,7 @@ loginRedirect = function() {
 }
 
 
-gamesTimeline = function(name) {
+function gamesTimeline(name) {
 
 var player_ref = database.ref('PlayerProfile/');
 player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
