@@ -45,337 +45,323 @@ var user = firebase.auth().currentUser;
 
 
 window.addEventListener('load', function() {
-
-authState('load');
-playerContentIndex(3, 'rating');
-
+	authState('load');
+	playerContentIndex(3, 'rating');
 });
 
 
 $$(document).on('page:init', function(e) {
-
-var user = firebase.auth().currentUser;
-var name, email, photoUrl, uid, emailVerified;
-var page = e.detail.page;
-// Player Page
-if (page.name === 'index') {
-	authState(page.name);
-	playerContentIndex(3, 'rating');
-
-}
-if (page.name === 'players') {
-
-playerContent('rating');
-
-var mySearchbar = myApp.searchbar('.searchbar', {
-  	searchList: '.list-block-search',
-  	searchIn: '.item-title'
-	});
-
-}
-
-if (page.name === 'login-screen') {
-
-	// The start method will wait until the DOM is loaded.
-		ui.start('#firebaseui-auth-container', uiConfig);
-
-}
-if (page.name === 'add-game') {
-
-	if (user != null) {
-
-	name = user.displayName;
-	loadAddGame();
-	$$('.welcomeName').html('Hi' + ' ' + name);
-	keyboardScrollFix(page);//fix toolbar floating over keyboard
+	var user = firebase.auth().currentUser;
+	var name, email, photoUrl, uid, emailVerified;
+	var page = e.detail.page;
+	// Player Page
+	if (page.name === 'index') {
+		authState(page.name);
+		playerContentIndex(3, 'rating');
 
 	}
-	else{
+	if (page.name === 'players') {
+		playerContent('rating');
+		var mySearchbar = myApp.searchbar('.searchbar', {
+		  	searchList: '.list-block-search',
+		  	searchIn: '.item-title'
+			});
+		}
 
-	$$('.welcomeName').html('No account');
-	loginRedirect();
+	if (page.name === 'login-screen') {
+
+		// The start method will wait until the DOM is loaded.
+			ui.start('#firebaseui-auth-container', uiConfig);
 
 	}
-}
-if (page.name === 'timeline') {
-	player = page.query.name;
-	console.log(player);
-	if (player!=null) {
-		name = player;
-	}
-	else if(player==null && user!=null){
-	name	=	user.displayName;
-	}
-	else{
+	if (page.name === 'add-game') {
+
+		if (user != null) {
+
+		opponentName=page.query.opponentName;
+		name = user.displayName;
+		loadAddGame();
+		$$('.welcomeName').html('Hi' + ' ' + name);
+		keyboardScrollFix(page);//fix toolbar floating over keyboard
+		if(opponentName!=null){
+			$$('#autocomplete-dropdown-all').val(opponentName);
+		}
+
+		}
+		else{
+
+		$$('.welcomeName').html('No account');
 		loginRedirect();
-	}
 
-	if (name!=null) {
-		gamesTimeline(name);}
-	else{
-		console.log(name+'No name')
+		}
 	}
+	if (page.name === 'timeline') {
+		player = page.query.name;
+		console.log(player);
+		if (player!=null) {
+			name = player;
+		}
+		else if(player==null && user!=null){
+		name	=	user.displayName;
+		}
+		else{
+			loginRedirect();
+		}
 
-}
+		if (name!=null) {
+			gamesTimeline(name);}
+		else{
+			console.log(name+'No name')
+		}
+
+	}
 
 });
 
-
 var loginLink = $$('div').filter(function(index, el) {
 	return $$(this).hasClass('loginLink');	});
-
-
 var logoutLink = $$('a').filter(function(index, el) {
 	return $$(this).hasClass('log-out');	});
-
-
 logoutLink.on('click', function(e) {
 	firebase.auth().signOut();
 	myApp.closePanel();
+	authState('index');
 	mainView.router.loadPage('index.html');
 	alert('Sign Out Successful');
 	logoutLink.hide();
 
 });
 
-
 // =================Add Game Page=====================
-loadAddGame = function() {
-
+function loadAddGame() {
 //initialize fuction scope variables
-var winner_score, winner_uid, winner_name, winner_rating;
-var loser_score, loser_uid, loser_name, loser_rating, totalPoints;
-var user = firebase.auth().currentUser;
+	var winner_score, winner_uid, winner_name, winner_rating;
+	var loser_score, loser_uid, loser_name, loser_rating, totalPoints;
+	var user = firebase.auth().currentUser;
 
 // Populating Opponents Name Field
-var autocompleteDropdownAll = myApp.autocomplete({
-	input: '#autocomplete-dropdown-all',
-	openIn: 'dropdown',
-	source: function(autocomplete, query, render) {
+	var autocompleteDropdownAll = myApp.autocomplete({
+		input: '#autocomplete-dropdown-all',
+		openIn: 'dropdown',
+		source: function(autocomplete, query, render) {
 
-		var results = [];
-		var player_ref = database.ref('PlayerProfile/');
+			var results = [];
+			var player_ref = database.ref('PlayerProfile/');
 
-		player_ref.on("value", function(snapshot) {
-			snapshot.forEach(function(player_snap) {
-				// var uid = player_snap.child("uid").val();
-				var displayName = player_snap.child("displayName").val();
-
-				if (displayName.toLowerCase().indexOf(query.toLowerCase()) >= 0)
-					results.push(displayName);
-				// console.log(displayName);
+			player_ref.on("value", function(snapshot) {
+				snapshot.forEach(function(player_snap) {
+					// var uid = player_snap.child("uid").val();
+					var playerName = player_snap.child("displayName").val();
+					if ((playerName.toLowerCase().indexOf(query.toLowerCase()) >= 0) && playerName!=user.displayName)
+						results.push(playerName);
+					// console.log(displayName);
+				});
+				render(results)
 			});
-			render(results)
-		});
 
+		}
+	});
+		// End of Opponents Name field
+	function validateScores(opponent_score,user_score,opponent_name) {
+
+			if (!opponent_score || !user_score || !opponent_name) {
+			myApp.alert('field is empty...');
+			return;
+			}
 	}
-});
-	// End of Opponents Name field
+//Getting data from Form
+	$$('.form-to-data').on('click', function() {
 
-validateScores = function(opponent_score,user_score,opponent_name) {
+		//Current User Data
+		var UserformData = myApp.formToData('#UserScoreForm'); // formData is an Object
+		var user_uid = user.uid;
+		var user_name = user.displayName;
+		var user_score = parseInt(UserformData["UserScore"]);
 
-	if (!opponent_score || !user_score || !opponent_name) {
-	myApp.alert('field is empty...');
-	return;
-	}
-}
+		//Opponent Data
+		var OpponentformData = myApp.formToData('#OpponentScoreForm');
+		var opponent_name = OpponentformData["OpponentName"];
+		var opponent_score = parseInt(OpponentformData["OpponentScore"]);
 
-	//Getting data from Form
-$$('.form-to-data').on('click', function() {
+		validateScores(opponent_score,user_score,opponent_name);
 
-	//Current User Data
-	var UserformData = myApp.formToData('#UserScoreForm'); // formData is an Object
-	var user_uid = user.uid;
-	var user_name = user.displayName;
-	var user_score = parseInt(UserformData["UserScore"]);
+		player_ref.orderByChild("displayName").equalTo(opponent_name).on("child_added", function(snapshot) {
 
-	//Opponent Data
-	var OpponentformData = myApp.formToData('#OpponentScoreForm');
-	var opponent_name = OpponentformData["OpponentName"];
-	var opponent_score = parseInt(OpponentformData["OpponentScore"]);
+			opponent_uid = snapshot.key;
+			opponent_rating = snapshot.val().rating;
+			opponent_matches = snapshot.val().matches;
 
-	validateScores(opponent_score,user_score,opponent_name);
+			pushGame();
+		}); //End of player_ref opponent_uid
 
-	player_ref.orderByChild("displayName").equalTo(opponent_name).on("child_added", function(snapshot) {
+	function findWinner() {
 
-		opponent_uid = snapshot.key;
-		opponent_rating = snapshot.val().rating;
-		opponent_matches = snapshot.val().matches;
-
-		pushGame();
-	}); //End of player_ref opponent_uid
-
-
-findWinner = function() {
-
-	console.log('12 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
-	if (user_score > opponent_score) {
-		console.log('13 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
-
-		winner_score = user_score;
-		winner_uid = user_uid;
-		winner_name = user_name;
-
-		loser_score = opponent_score;
-		loser_uid = opponent_uid;
-		loser_name = opponent_name;
-		console.log();
-		('User Won with :' + winner_score + ' Opponent lost with:' + loser_score);
-
-	} else {
-		console.log('14 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
-		winner_score = opponent_score;
-		winner_uid = opponent_uid;
-		winner_name = opponent_name;
-
-		loser_score = user_score;
-		loser_uid = user_uid;
-		loser_name = user_name;
-		console.log('Opponent Won with:' + winner_score + ' User lost with: ' + loser_score);
-	}
-}
-
-pushGame = function() {
-
-	findWinner();
-	calculateRating();
-	updateMatches(user_uid);
-	updateMatches(opponent_uid);
-
-	alert("Game Added!");
-	mainView.router.loadPage('timeline.html');
-
-} //End of push Game function
-
-calculateRating = function() {
-
-	//Evaluate winner rating and loser rating
-	database.ref('/PlayerProfile/' + user_uid).once('value').then(function(snapshot) {
-
-		var user_rating = snapshot.val().rating;
-
-		console.log('1 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
-
+		console.log('12 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 		if (user_score > opponent_score) {
-			console.log(' 2 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+			console.log('13 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
 
-			console.log('Winner is ' + user_name + ' with as score of ' + user_score);
+			winner_score = user_score;
+			winner_uid = user_uid;
+			winner_name = user_name;
 
-			winner_rating = user_rating;
-			loser_rating = opponent_rating;
-			// myApp.alert('user_rating:' + winner_rating + 'opponent_rating:' + loser_rating);
-
-		} else {
-			console.log(' 3 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
-			console.log('Winner is ' + opponent_name + 'with as score of ' + opponent_score);
-
-			winner_rating = opponent_rating;
-			loser_rating = user_rating
-
-			// myApp.alert('user_rating:' + loser_rating + 'opponent_rating:' + winner_rating);
-		}
-
-		points = (winner_score - loser_score);
-
-		console.log('points ' + points);
-
-		var diffInRatings = (winner_rating - loser_rating);
-
-		console.log('diffInRating :' + diffInRatings);
-
-		var changeInRating = ((0.000128 * (diffInRatings * diffInRatings)) - (0.064 * diffInRatings) + 8);
-
-		console.log('changeInRating :' + changeInRating);
-
-		if (winner_rating != loser_rating) {
-			pointsAwarded = (points / 10);
-			console.log(' Points Awarded  ' + pointsAwarded);
-
-			totalPoints=Math.round10(pointsAwarded+changeInRating,-2);
-
-			new_winner_rating = (winner_rating + changeInRating + pointsAwarded);
-			console.log('old winner rating  ' + winner_rating + ' updated winner rating ' + new_winner_rating);
-
-			new_loser_rating = (loser_rating - changeInRating);
-			console.log('old loser rating  ' + loser_rating + 'updated loser rating ' + new_loser_rating);
-
-			myApp.alert('New Rating : '+ Math.round10(new_winner_rating,-2), 'Game Stats');
-			// myApp.alert('Your New Rating is :' + new_winner_rating);
-
-		} else if (winner_rating == loser_rating) {
-			pointsAwarded = (points / 10);
-			console.log(' 2 pointsAwarded  ' + pointsAwarded);
-
-			totalPoints=Math.round10(pointsAwarded,-2);
-
-			new_winner_rating = (winner_rating + pointsAwarded);
-			new_loser_rating = (loser_rating - pointsAwarded);
-			myApp.alert(new_winner_rating + ': Same Rating Players ' + new_loser_rating);
+			loser_score = opponent_score;
+			loser_uid = opponent_uid;
+			loser_name = opponent_name;
+			console.log();
+			('User Won with :' + winner_score + ' Opponent lost with:' + loser_score);
 
 		} else {
-			myApp.alert('Something is wrong')
+			console.log('14 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+			winner_score = opponent_score;
+			winner_uid = opponent_uid;
+			winner_name = opponent_name;
+
+			loser_score = user_score;
+			loser_uid = user_uid;
+			loser_name = user_name;
+			console.log('Opponent Won with:' + winner_score + ' User lost with: ' + loser_score);
 		}
+	}
 
-		var Games = database.ref('Games/');
-		var Game = Games.child('Game');
-		var Stats = Games.child('Stats');
-		var time_stamp =firebase.database.ServerValue.TIMESTAMP;
+	function pushGame() {
 
-		Game.push({
-			// date: firebase.database.ServerValue.TIMESTAMP,
-			added_by:user_uid,
-			user_score:user_score,
-			user_name:user_name,
-			opponent_uid:opponent_uid,
-			opponent_name:opponent_name,
-			opponent_score:opponent_score,
-			status:'pending',
-			date:time_stamp
-		})
+		findWinner();
+		calculateRating();
+		updateMatches(user_uid);
+		updateMatches(opponent_uid);
 
-		Stats.push({
+		alert("Game Added!");
+		mainView.router.loadPage('timeline.html');
 
-				date:time_stamp,
-				winner_score: winner_score,
-				winner_uid: winner_uid,
-				winner_name: winner_name,
-				new_winner_rating: new_winner_rating,
-				loser_score: loser_score,
-				loser_uid: loser_uid,
-				loser_name: loser_name
+	} //End of push Game function
+
+	function calculateRating() {
+
+		//Evaluate winner rating and loser rating
+		database.ref('/PlayerProfile/' + user_uid).once('value').then(function(snapshot) {
+
+			var user_rating = snapshot.val().rating;
+
+			console.log('1 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+
+			if (user_score > opponent_score) {
+				console.log(' 2 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+
+				console.log('Winner is ' + user_name + ' with as score of ' + user_score);
+
+				winner_rating = user_rating;
+				loser_rating = opponent_rating;
+				// myApp.alert('user_rating:' + winner_rating + 'opponent_rating:' + loser_rating);
+
+			} else {
+				console.log(' 3 This is the user_score at the point ' + user_score + 'This is the opponent_score ' + opponent_score);
+				console.log('Winner is ' + opponent_name + 'with as score of ' + opponent_score);
+
+				winner_rating = opponent_rating;
+				loser_rating = user_rating
+
+				// myApp.alert('user_rating:' + loser_rating + 'opponent_rating:' + winner_rating);
+			}
+
+			points = (winner_score - loser_score);
+
+			console.log('points ' + points);
+
+			var diffInRatings = (winner_rating - loser_rating);
+
+			console.log('diffInRating :' + diffInRatings);
+
+			var changeInRating = ((0.000128 * (diffInRatings * diffInRatings)) - (0.064 * diffInRatings) + 8);
+
+			console.log('changeInRating :' + changeInRating);
+
+			if (winner_rating != loser_rating) {
+				pointsAwarded = (points / 10);
+				console.log(' Points Awarded  ' + pointsAwarded);
+
+				totalPoints=Math.round10(pointsAwarded+changeInRating,-2);
+
+				new_winner_rating = (winner_rating + changeInRating + pointsAwarded);
+				console.log('old winner rating  ' + winner_rating + ' updated winner rating ' + new_winner_rating);
+
+				new_loser_rating = (loser_rating - changeInRating);
+				console.log('old loser rating  ' + loser_rating + 'updated loser rating ' + new_loser_rating);
+
+				myApp.alert('New Rating : '+ Math.round10(new_winner_rating,-2), 'Game Stats');
+				// myApp.alert('Your New Rating is :' + new_winner_rating);
+
+			} else if (winner_rating == loser_rating) {
+				pointsAwarded = (points / 10);
+				console.log(' 2 pointsAwarded  ' + pointsAwarded);
+
+				totalPoints=Math.round10(pointsAwarded,-2);
+
+				new_winner_rating = (winner_rating + pointsAwarded);
+				new_loser_rating = (loser_rating - pointsAwarded);
+				myApp.alert(new_winner_rating + ': Same Rating Players ' + new_loser_rating);
+
+			} else {
+				myApp.alert('Something is wrong')
+			}
+
+			var Games = database.ref('Games/');
+			var Game = Games.child('Game');
+			var Stats = Games.child('Stats');
+			var time_stamp =firebase.database.ServerValue.TIMESTAMP;
+
+			Game.push({
+				// date: firebase.database.ServerValue.TIMESTAMP,
+				added_by:user_uid,
+				user_score:user_score,
+				user_name:user_name,
+				opponent_uid:opponent_uid,
+				opponent_name:opponent_name,
+				opponent_score:opponent_score,
+				status:'pending',
+				date:time_stamp
+			})
+
+			Stats.push({
+
+					date:time_stamp,
+					winner_score: winner_score,
+					winner_uid: winner_uid,
+					winner_name: winner_name,
+					new_winner_rating: new_winner_rating,
+					loser_score: loser_score,
+					loser_uid: loser_uid,
+					loser_name: loser_name
+
+			});
+
+			var updates = {};
+
+			updates['PlayerProfile/' + winner_uid + '/rating'] = Math.round10(new_winner_rating,-2);
+			updates['PlayerProfile/' + loser_uid + '/rating'] = Math.round10(new_loser_rating,-2);
+
+			return database.ref().update(updates);
 
 		});
+	}
+
+	function updateMatches(uid) {
+
+	matches_ref = database.ref('/PlayerProfile/' + uid).once('value').then(function(snapshot) {
+		var current_matches = snapshot.val().matches;
+
+		updated_matches = current_matches + 1;
 
 		var updates = {};
-
-		updates['PlayerProfile/' + winner_uid + '/rating'] = Math.round10(new_winner_rating,-2);
-		updates['PlayerProfile/' + loser_uid + '/rating'] = Math.round10(new_loser_rating,-2);
-
+		updates['PlayerProfile/' + uid + '/matches'] = updated_matches;
+		// updates['PlayerProfile/' + uid2 + '/matches'] = new_matches;
 		return database.ref().update(updates);
+		});
+	}
 
-	});
-}
-
-
-updateMatches = function(uid) {
-
-matches_ref = database.ref('/PlayerProfile/' + uid).once('value').then(function(snapshot) {
-	var current_matches = snapshot.val().matches;
-
-	updated_matches = current_matches + 1;
-
-	var updates = {};
-	updates['PlayerProfile/' + uid + '/matches'] = updated_matches;
-	// updates['PlayerProfile/' + uid2 + '/matches'] = new_matches;
-	return database.ref().update(updates);
-	});
-}
-
-});//==========End of on-form-click====// ==========End of Add Score============
-
+	});//==========End of on-form-click====/
 }// ========================End of Add Page Init================================
 
-authState = function(page) {
+function authState(page) {
 	firebase.auth().onAuthStateChanged(function(user) {
 
 	if (user) {
@@ -402,18 +388,17 @@ authState = function(page) {
 		document.getElementById('sign-in-status').textContent = 'Signed out';
 		addLink('div','loginLink','Sign in');//adds sign-in links after sign out
 		removeLink('a','timelineLink')//removes time-line links link after sign out
-
+		displayWelcomeBar('hide');
 		}
 	},
 	function(error) {
 		console.log(error);
 	});
 };
-
 // ============================================Generate Player List=============================
-playerContent = function(sort) {
-var player_ref = database.ref('PlayerProfile/');
-player_ref.orderByChild(sort).on("value", function(snapshot) {
+function playerContent(sort) {
+	var player_ref = database.ref('PlayerProfile/');
+	player_ref.orderByChild(sort).on("value", function(snapshot) {
 	snapshot.forEach(function(player_snap) {
 		var ratings = player_snap.child("rating").val();
 		var players = player_snap.child("displayName").val();
@@ -445,13 +430,11 @@ player_ref.orderByChild(sort).on("value", function(snapshot) {
 
 	});
 });
-
 };
 
-playerContentIndex = function(list_no, sort) {
-
-var player_ref = database.ref('PlayerProfile/');
-player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapshot) {
+function playerContentIndex(list_no, sort) {
+	var player_ref = database.ref('PlayerProfile/');
+	player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapshot) {
 	snapshot.forEach(function(player_snap) {
 		var ratings = player_snap.child("rating").val();
 		var players = player_snap.child("displayName").val();
@@ -483,33 +466,30 @@ player_ref.orderByChild(sort).limitToLast(list_no).once("value", function(snapsh
 });
 };
 
-displayWelcomeBar = function(status) {
+function displayWelcomeBar(status) {
+	var welcomeHTML=	'<div class="center card-header bg-green color-white">'+
+						'<div class="left"></div>'+
+						'<div class="center card-content ratingHome " style="font-size: 21px; font-weight: 100;"></div>'+
+						'<div class="right"></div>'+
+						'</div>';
+		// Prepend new list element
+		if (status=='show') {
 
-var welcomeHTML=	'<div class="center card-header bg-green color-white">'+
-					'<div class="left"></div>'+
-					'<div class="center card-content ratingHome " style="font-size: 21px; font-weight: 100;"></div>'+
-					'<div class="right"></div>'+
-					'</div>';
+			$$('.welcomeCard').html(welcomeHTML);
+			// $$('.navTitle').html()
 
-	// Prepend new list element
-	if (status=='show') {
+		}
 
-		$$('.welcomeCard').html(welcomeHTML);
-		$$('.navTitle').html()
+		else if (status=='hide') {
+
+			welcomeHTML ='';
+			$$('.welcomeCard').html(welcomeHTML);
+			$$('.navTitle').html('Table Tennis')
+		}
 
 	}
-
-	else if (status=='hide') {
-
-		welcomeHTML ='';
-		$$('.welcomeCard').html(welcomeHTML);
-	}
-
-}
-
-displayRatingHome = function(uid,page) {
-
-var player_ref_uid = database.ref('PlayerProfile/'+uid);
+	displayRatingHome = function(uid,page) {
+	var player_ref_uid = database.ref('PlayerProfile/'+uid);
 	player_ref_uid.on("value", function(snapshot) {
 
 	var	rating = snapshot.val().rating;
@@ -522,10 +502,9 @@ var player_ref_uid = database.ref('PlayerProfile/'+uid);
 });
 }
 
-createNewProfile = function(uid,displayName) {
-
-var player_ref = database.ref('PlayerProfile/');
-player_ref.once('value', function(snapshot) {
+function createNewProfile(uid,displayName) {
+	var player_ref = database.ref('PlayerProfile/');
+	player_ref.once('value', function(snapshot) {
 
 	if (snapshot.hasChild(uid)) {
 
@@ -542,10 +521,9 @@ player_ref.once('value', function(snapshot) {
 		alert("Profle Created!");
 	}
 });
-
 }
 
-loginRedirect = function() {
+function loginRedirect() {
 
     myApp.modal({
     title:  'Your Not Logged In',
@@ -569,11 +547,17 @@ loginRedirect = function() {
 
 }
 
+function gamesTimeline(name) {
 
+<<<<<<< HEAD
 function gamesTimeline(name) {
 
 var player_ref = database.ref('PlayerProfile/');
 player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
+=======
+	var player_ref = database.ref('PlayerProfile/');
+	player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
+>>>>>>> desk-branch
 
 	user_uid = snapshot.key;
 	matches= snapshot.val().matches;
@@ -584,10 +568,9 @@ player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_ad
 
 });
 
+function getGameData(user_uid) {
 
-getGameData = function(user_uid) {
-
-var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('date');
+	var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('date');
 
 	myGamesRef.on('value', function(snapshot) {
 		snapshot.forEach(function(childSnapshot) {
@@ -611,9 +594,8 @@ var myGamesRef = firebase.database().ref('Games/Game/').orderByChild('date');
 
 }//End of gamesTimeline
 
-displayGameData = function(date,user_name,user_score,opponent_name,opponent_score) {
-
-var timelineItem =	'<div class="timeline-item">'+
+function displayGameData(date,user_name,user_score,opponent_name,opponent_score) {
+	var timelineItem =	'<div class="timeline-item">'+
 					'<div class="timeline-item-date">'+ '<small>'+'</small></div>'+
 					'<div class="timeline-item-divider"></div>'+
 					'<div class="timeline-item-content">'+
@@ -638,7 +620,7 @@ var timelineItem =	'<div class="timeline-item">'+
 }
 
 
-addLink = function(element,hasClass,action) {
+function addLink(element,hasClass,action) {
 
 	var link	= $$(element).filter(function(index, el) {
 		return $$(this).hasClass(hasClass);
@@ -712,7 +694,7 @@ function removeLink(element,hasclass) {
     };
   }
 })();
-function keyboardScrollFix() {
+function keyboardScrollFix(page) {
 	if (!myApp.device.ios) {
 		$$(page.container).find('input, textarea').on('focus', function(event) {
 			var container = $$(event.target).closest('.page-content');
