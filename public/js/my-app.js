@@ -549,8 +549,15 @@ function loginRedirect() {
 
 function gamesTimeline(name) {
 
+<<<<<<< HEAD
+function gamesTimeline(name) {
+
+var player_ref = database.ref('PlayerProfile/');
+player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
+=======
 	var player_ref = database.ref('PlayerProfile/');
 	player_ref.orderByChild("displayName").limitToLast(1).equalTo(name).on("child_added", function(snapshot) {
+>>>>>>> desk-branch
 
 	user_uid = snapshot.key;
 	matches= snapshot.val().matches;
