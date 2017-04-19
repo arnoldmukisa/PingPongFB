@@ -1,28 +1,35 @@
 [debug] ----------------------------------------------------------------------
-[debug] Command:      /usr/local/bin/node /usr/local/bin/firebase serve
-[debug] CLI Version:  3.5.0
-[debug] Platform:     darwin
+[debug] Command:      C:\Program Files\nodejs\node.exe C:\Users\amukisa\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] CLI Version:  3.6.1
+[debug] Platform:     win32
 [debug] Node Version: v6.10.0
-[debug] Time:         Wed Apr 05 2017 20:26:02 GMT-0500 (CDT)
+[debug] Time:         Wed Apr 19 2017 13:36:20 GMT-0500 (Central Daylight Time)
 [debug] ----------------------------------------------------------------------
 [debug] 
+[debug] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/OgGxOD_gjYNFS5A8lIe5L1ulHlAMP5P80um5MCzajgI',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Wed Apr 19 2017 13:36:20 GMT-0500 (Central Daylight Time)
+[debug] <<< HTTP RESPONSE 200
+[debug] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/cmupingpong  
+ Wed Apr 19 2017 13:36:20 GMT-0500 (Central Daylight Time)
+[debug] <<< HTTP RESPONSE 200
+[debug] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/cmupingpong/tokens  
+ Wed Apr 19 2017 13:36:20 GMT-0500 (Central Daylight Time)
+[debug] <<< HTTP RESPONSE 200
 [info] Starting Firebase development server...
 [info] 
-[info] Project Directory: /Users/mac/Desktop/PingPongFB
-[info] Public Directory: public
-[info] 
-[info] Server listening at: http://localhost:5000
-[debug] ----------------------------------------------------------------------
-[debug] Command:      /usr/local/bin/node /usr/local/bin/firebase serve
-[debug] CLI Version:  3.5.0
-[debug] Platform:     darwin
-[debug] Node Version: v6.10.0
-[debug] Time:         Fri Apr 07 2017 09:42:14 GMT-0500 (CDT)
-[debug] ----------------------------------------------------------------------
-[debug] 
-[info] Starting Firebase development server...
-[info] 
-[info] Project Directory: /Users/mac/Desktop/PingPongFB
+[info] Project Directory: C:\Users\amukisa\Desktop\PingPongFB
+[debug] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/cmupingpong  
+ Wed Apr 19 2017 13:36:21 GMT-0500 (Central Daylight Time)
+[debug] <<< HTTP RESPONSE 200
+[debug] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/351881220973/clients/_:getWebAppConfig  
+ Wed Apr 19 2017 13:36:21 GMT-0500 (Central Daylight Time)
+[debug] <<< HTTP RESPONSE 200
 [info] Public Directory: public
 [info] 
 [info] Server listening at: http://localhost:5000
